@@ -51,6 +51,16 @@ group :development, :test do
 
   # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
   gem "rubocop-rails-omakase", require: false
+
+  # test frameworks
+  gem "rspec-rails"
+  gem "shoulda-matchers"
+
+  # code QA
+  gem "rubocop"
+
+  # Debugging and profiling
+  gem "pry-doc" # This gem is very large, so don't include it in production.
 end
 
 group :development do
