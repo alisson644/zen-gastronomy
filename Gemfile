@@ -58,6 +58,7 @@ group :development, :test do
   # test frameworks
   gem "rspec-rails"
   gem "shoulda-matchers"
+  gem "factory_bot_rails"
 
   # code QA
   gem "rubocop"
