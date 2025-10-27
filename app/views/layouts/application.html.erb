@@ -23,8 +23,12 @@
   </head>
 
   <body>
-    <p class="notice"><%= notice %></p>
-    <p class="alert"><%= alert %></p>
-    <%= yield %>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1" type="module"></script> 
+    <% if user_signed_in? %>
+     <%= render 'partials/navbar'%>
+     <%= yield %>
+    <% else %>
+      <%= yield %>
+    <% end %>
   </body>
 </html>
