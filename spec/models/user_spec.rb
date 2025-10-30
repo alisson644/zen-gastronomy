@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe User, type: :model do
-  it { should belong_to(:company) }
+  it { should belong_to(:company).optional(true) }
   it { should have_many(:movements).dependent(:destroy) }
 
   it { should validate_presence_of(:username) }
