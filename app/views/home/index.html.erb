@@ -6,9 +6,17 @@
   </div>
 </header>
 <main>
-  <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-   home
+  <div class="relative flex flex-col my-6 bg-white shadow-sm border border-slate-200 rounded-lg w-96">
+  <div class="p-4">
+    <h6 class="mb-2 text-slate-800 text-xl font-semibold">
+      Conta
+    </h6>
+    <canvas
+      data-controller="chartjs"
+      data-chartjs-data-value='{ "labels": ["January", "February", "March", "April", "May", "June", "July"], "datasets": [{ "label": "My First dataset", "backgroundColor": "transparent", "borderColor": "#3B82F6", "data": [37, 83, 78, 54, 12, 5, 99] }] }'
+    ></canvas>
   </div>
+</div>  
 </main>
 
 
