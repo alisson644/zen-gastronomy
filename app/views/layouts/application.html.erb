@@ -26,9 +26,13 @@
   <body>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1" type="module"></script> 
     <% if user_signed_in? %>
-     <%= render 'partials/navbar'%>
-     <%= render 'partials/modal_create_company'%>
-     <%= yield %>
+     <div data-controller="sidebar" class="group/layout min-h-screen">
+       <%= render 'partials/navbar'%>
+       <main class="md:pl-64 md:group-data-collapsed/layout:pl-20 group-data-animate/layout:transition-[padding] duration-200">
+         <%= render 'partials/modal_create_company'%>
+         <%= yield %>
+       </main>
+     </div>
     <% else %>
       <%= yield %>
     <% end %>

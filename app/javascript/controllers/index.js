@@ -15,3 +15,6 @@ application.register("currency-input", CurrencyInputController)
 
 import MoneyChartController from "./money_chart_controller"
 application.register("money-chart", MoneyChartController)
+
+import SidebarController from "./sidebar_controller"
+application.register("sidebar", SidebarController)
