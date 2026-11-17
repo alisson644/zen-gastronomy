@@ -1,0 +1,38 @@
+<% input_class = "block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" %>
+<div id="account_form">
+  <%= form_with model: account, data: { controller: "modal-form", action: "turbo:submit-end->modal-form#close" } do |form| %>
+    <h2 class="text-base/7 font-semibold text-gray-900">CONTA</h2>
+    <%= render "partials/form_errors", record: account %>
+
+    <div class="grid gap-y-6 mt-3 text-left">
+      <div>
+        <%= form.label :name, "Nome da conta", class: "block text-sm/6 font-medium text-gray-900" %>
+        <div class="mt-2">
+          <%= form.text_field :name, placeholder: "Nome da conta", required: true, class: input_class %>
+        </div>
+      </div>
+
+      <div>
+        <%= form.label :account_type, "Tipo da conta", class: "block text-sm/6 font-medium text-gray-900" %>
+        <div class="mt-2">
+          <%= form.select :account_type, [["Banco", "banco"], ["Caixa", "caixa"], ["Investimento", "investimento"], ["Cartão", "cartao"], ["Outros", "outros"]], { prompt: "Selecione o tipo da conta" }, required: true, class: input_class %>
+        </div>
+      </div>
+
+      <div>
+        <%= form.label :initial_balance, "Saldo inicial", class: "block text-sm/6 font-medium text-gray-900" %>
+        <div class="mt-2">
+          <div class="flex items-center rounded-md bg-white pl-3 outline-1 -outline-offset-1 outline-gray-300 has-[input:focus-within]:outline-2 has-[input:focus-within]:-outline-offset-2 has-[input:focus-within]:outline-indigo-600">
+            <div class="shrink-0 text-base text-gray-500 select-none sm:text-sm/6">R$</div>
+            <%= form.text_field :initial_balance, value: (account.initial_balance.present? ? number_with_precision(account.initial_balance, precision: 2, separator: ",", delimiter: ".") : nil), inputmode: "decimal", autocomplete: "off", placeholder: "0,00", data: { controller: "currency-input", action: "input->currency-input#input blur->currency-input#blur" }, class: "block min-w-0 grow py-1.5 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6" %>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex flex-col-reverse gap-3 sm:flex-row">
+        <button type="button" command="close" commandfor="account" class="w-full rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 outline-1 outline-gray-300 hover:bg-gray-50">Cancelar</button>
+        <%= form.submit "Salvar", class: "w-full rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white hover:bg-indigo-500" %>
+      </div>
+    </div>
+  <% end %>
+</div>

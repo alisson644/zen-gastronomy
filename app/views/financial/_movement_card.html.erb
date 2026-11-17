@@ -1,0 +1,20 @@
+<% type_labels = { "entrada" => "Entrada", "saida" => "Saída", "transfer" => "Transferência" } %>
+<li id="<%= dom_id movement, :card %>" class="flex items-start justify-between gap-4 px-4 py-3">
+  <div class="min-w-0">
+    <p class="truncate text-sm font-medium text-slate-800">
+      <%= movement.account.name %><% if movement.transfer? && movement.related_account %> → <%= movement.related_account.name %><% end %>
+    </p>
+    <p class="truncate text-xs text-slate-600">
+      <%= [movement.category&.name, movement.subcategory&.name].compact.join(" › ") %>
+    </p>
+    <p class="text-xs text-slate-500">
+      <%= type_labels[movement.mv_type] %> · <%= movement.occurred_at.strftime("%d/%m/%Y") %>
+    </p>
+    <% if movement.description.present? %>
+      <p class="mt-1 line-clamp-2 text-xs text-slate-500"><%= movement.description %></p>
+    <% end %>
+  </div>
+  <p class="shrink-0 text-sm font-semibold <%= movement.saida? ? 'text-red-600' : movement.entrada? ? 'text-green-600' : 'text-slate-800' %>">
+    <%= movement.saida? ? "-" : "" %><%= number_to_currency(movement.amount, precision: 2, unit: "R$", separator: ",", delimiter: ".") %>
+  </p>
+</li>

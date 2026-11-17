@@ -1,9 +1,11 @@
 class Movement < ApplicationRecord
+  include BrazilianDecimal
+  brazilian_decimal :amount
+
   belongs_to :company
   belongs_to :account
   belongs_to :category
   belongs_to :subcategory
-  belongs_to :user
   belongs_to :creator, class_name: "User", foreign_key: :created_by_id
   belongs_to :related_account, class_name: "Account", optional: true
 
@@ -11,6 +13,10 @@ class Movement < ApplicationRecord
 
   validates :amount, numericality: { greater_than: 0 }
   validates :occurred_at, presence: true
+  validates :mv_type, presence: true
+  validate :accounts_belong_to_company
+  validate :related_account_presence_for_transfer
+  validate :related_account_differs_from_account
 
   before_update :store_old_state
   after_create  :apply_effect!
@@ -47,6 +53,12 @@ class Movement < ApplicationRecord
   def related_account_presence_for_transfer
     if mv_type == "transfer" && related_account_id.blank?
       errors.add(:related_account, "must be present for transfers")
+    end
+  end
+
+  def related_account_differs_from_account
+    if mv_type == "transfer" && related_account_id.present? && related_account_id == account_id
+      errors.add(:related_account, "must be different from the source account")
     end
   end
 

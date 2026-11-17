@@ -1,0 +1,5 @@
+<% accounts = company.accounts.order(:name).to_a %>
+<% categories = company.categories.includes(:subcategories).order(:id) %>
+<%= turbo_stream.replace "financial_summary", partial: "financial/summary", locals: { accounts: accounts } %>
+<%= turbo_stream.replace "account_form", partial: "partials/account_form", locals: { account: Account.new } %>
+<%= turbo_stream.replace "transaction_form", partial: "partials/transaction_form", locals: { movement: Movement.new(occurred_at: Date.current), accounts: accounts, categories: categories } %>

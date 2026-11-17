@@ -1,0 +1,3 @@
+<% categories = @company.categories.includes(:subcategories).order(:id) %>
+<%= turbo_stream.replace "subcategory_select", partial: "partials/subcategory_select", locals: { categories: categories, selected: @subcategory.id } %>
+<%= turbo_stream.replace "subcategory_form", partial: "partials/subcategory_form", locals: { subcategory: Subcategory.new, categories: categories } %>

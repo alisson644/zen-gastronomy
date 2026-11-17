@@ -1,0 +1,5 @@
+<% categories = @company.categories.includes(:subcategories).order(:id) %>
+<%= turbo_stream.replace "subcategory_select", partial: "partials/subcategory_select", locals: { categories: categories, selected: @subcategory&.id } %>
+<%= turbo_stream.replace "category_form", partial: "partials/category_form", locals: { category: Category.new } %>
+<%# Já deixa a nova categoria escolhida no modal de subcategoria, caso o usuário queira adicionar uma em seguida %>
+<%= turbo_stream.replace "subcategory_form", partial: "partials/subcategory_form", locals: { subcategory: Subcategory.new(category: @category), categories: categories } %>

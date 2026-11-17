@@ -68,6 +68,9 @@ RSpec.configure do |config|
 
   # Filter lines from Rails gems in backtraces.
   config.filter_rails_from_backtrace!
+
+  # Rails 8 loads routes lazily; Devise needs them loaded to find its mappings.
+  config.before(:each, type: :request) { Rails.application.try(:reload_routes_unless_loaded) }
   # arbitrary gems may also be filtered via:
   # config.filter_gems_from_backtrace("gem name")
 end

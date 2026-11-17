@@ -1,4 +1,7 @@
 class Account < ApplicationRecord
+  include BrazilianDecimal
+  brazilian_decimal :initial_balance, :current_balance
+
   belongs_to :company
   has_many :movements, dependent: :destroy
   has_many :related_transactions, class_name: "Movement", foreign_key: :related_account_id

@@ -4,6 +4,6 @@ FactoryBot.define do
     account_type { "cartao" }
     current_balance { "9.99" }
     initial_balance { "9.99" }
-    conpany { nil }
+    association :company
   end
 end

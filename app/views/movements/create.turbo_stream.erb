@@ -1,0 +1,2 @@
+<%= render "financial/streams", company: @company %>
+<%= turbo_stream.replace "movements_table", partial: "financial/movements_table", locals: { movements: @company.movements.includes(:account, :related_account, :category, :subcategory).order(occurred_at: :desc, created_at: :desc) } %>

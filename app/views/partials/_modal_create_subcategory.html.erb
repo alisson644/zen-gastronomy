@@ -1,0 +1,17 @@
+<el-dialog>
+    <dialog id="subcategory" aria-labelledby="dialog-title" class=" inset-0 size-auto max-h-none max-w-none overflow-y-auto overflow-x-auto bg-transparent backdrop:bg-transparent">
+        <el-dialog-backdrop class="fixed inset-0 bg-gray-500/75 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"></el-dialog-backdrop>
+
+        <div tabindex="0" class="flex min-h-full items-end justify-center p-0 text-center focus:outline-none sm:items-center sm:p-4">
+            <el-dialog-panel class="relative w-full transform overflow-hidden rounded-t-xl sm:rounded-lg bg-white text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:my-8 sm:w-full sm:max-w-lg data-closed:sm:translate-y-0 data-closed:sm:scale-95">
+                <div class="bg-white px-4 pt-5 pb-6 sm:p-6">
+                    <div class="mt-3 text-center">
+                        <div class="mt-2">
+                            <%= render "partials/subcategory_form", subcategory: subcategory, categories: categories %>
+                        </div>
+                    </div>
+                </div>
+            </el-dialog-panel>
+        </div>
+    </dialog>
+</el-dialog>

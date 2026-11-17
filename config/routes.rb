@@ -17,4 +17,6 @@ Rails.application.routes.draw do
   resources :companies
   resources :accounts
   resources :movements
+  resources :categories, only: [ :create ]
+  resources :subcategories, only: [ :create ]
 end
