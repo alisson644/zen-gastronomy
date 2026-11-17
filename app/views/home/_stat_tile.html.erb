@@ -1,0 +1,16 @@
+<%# locals: label:, value:, change: nil, hint: nil, swatch: nil %>
+<div class="rounded-lg border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
+  <p class="flex items-center gap-2 text-sm text-slate-500">
+    <% if local_assigns[:swatch] %><span class="inline-block size-2.5 rounded-sm" style="background: <%= swatch %>" aria-hidden="true"></span><% end %>
+    <%= label %>
+  </p>
+  <p class="mt-1 text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl"><%= brl(value) %></p>
+  <% if local_assigns[:change] %>
+    <p class="mt-1 text-xs text-slate-500">
+      <span aria-hidden="true"><%= change.positive? ? "▲" : change.negative? ? "▼" : "■" %></span>
+      <%= change.positive? ? "+" : "" %><%= change %>% vs mês anterior
+    </p>
+  <% elsif local_assigns[:hint] %>
+    <p class="mt-1 text-xs text-slate-500"><%= hint %></p>
+  <% end %>
+</div>

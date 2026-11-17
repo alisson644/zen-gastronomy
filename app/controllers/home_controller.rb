@@ -4,8 +4,6 @@ class HomeController < ApplicationController
     return if current_user.company.blank?
 
     @company = current_user.company
-    @categories = @company.categories
-    @subcategories = @company.subcategories
-    @accounts = @company.accounts
+    @summary = DashboardSummary.new(@company, month: DashboardSummary.parse_month(params[:month]))
   end
 end
