@@ -1,16 +1,16 @@
-<div class="isolate bg-white px-6 py-24 sm:py-32 lg:px-8">
+<div class="relative isolate overflow-hidden bg-white px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
   <div aria-hidden="true" class="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80">
     <div style="clip-path: polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)" class="relative left-1/2 -z-10 aspect-1155/678 w-144.5 max-w-none -translate-x-1/2 rotate-30 bg-linear-to-tr from-[#ff80b5] to-[#9089fc] opacity-30 sm:left-[calc(50%-40rem)] sm:w-288.75"></div>
   </div>
   <div class="mx-auto max-w-2xl text-center">
-    <h2 class="text-4xl font-semibold tracking-tight text-balance text-gray-900 sm:text-5xl">Editar Usuário</h2>
+    <h2 class="text-3xl font-semibold tracking-tight text-balance text-gray-900 sm:text-5xl">Editar Usuário</h2>
   </div>
-  <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: {method: :put, class: "mx-auto mt-16 max-w-xl sm:mt-20"}) do |f| %>
+  <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: {method: :put, class: "mx-auto mt-8 max-w-xl sm:mt-16"}) do |f| %>
     <%= render "devise/shared/error_messages", resource: resource %>
-    <div class="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-1">
+    <div class="grid grid-cols-1 gap-x-8 gap-y-3 sm:grid-cols-1">
       <div>
-          <%= f.label :email, class: "block text-sm/6 font-semibold text-gray-900" %><br />
-        <div class="mt-2.5">
+          <%= f.label :email, class: "block text-sm/6 font-semibold text-gray-900" %>
+        <div>
           <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "block w-full rounded-md bg-white px-3.5 py-2 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600" %>
         </div>
       </div>
@@ -19,7 +19,7 @@
         <% end %>
 
       <div>
-          <%= f.label :password, class: "block text-sm/6 font-semibold text-gray-900" %> <i>(Deixar em branco se não for alterar)</i><br />
+          <%= f.label :password, class: "block text-sm/6 font-semibold text-gray-900" %> <i>(Deixar em branco se não for alterar)</i>
         <div class="mt-2.5">
           <%= f.password_field :password, autocomplete: "new-password", class: "block w-full rounded-md bg-white px-3.5 py-2 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600" %>
         </div>
@@ -27,27 +27,27 @@
       
 
       <div>
-          <%= f.label :password_confirmation, class: "block text-sm/6 font-semibold text-gray-900" %><br />
+          <%= f.label :password_confirmation, class: "block text-sm/6 font-semibold text-gray-900" %>
         <div class="mt-2.5">
           <%= f.password_field :password_confirmation, autocomplete: "new-password", class: "block w-full rounded-md bg-white px-3.5 py-2 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600" %>
         </div>
       </div>
 
       <div>
-          <%= f.label :current_password, class: "block text-sm/6 font-semibold text-gray-900" %> <i>Precisamos da senha para fazer as alterações</i><br />
+          <%= f.label :current_password, class: "block text-sm/6 font-semibold text-gray-900" %> <i>Precisamos da senha para fazer as alterações</i>
         <div class="mt-2.5">
           <%= f.password_field :current_password, autocomplete: "current-password", class: "block w-full rounded-md bg-white px-3.5 py-2 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600" %>
         </div>
       </div>
 
-        <div class="mt-10">
+        <div class="mt-6 sm:mt-10">
         <%= f.submit "Atualizar", class: "block w-full rounded-md bg-indigo-600 px-3.5 py-2.5 text-center text-sm font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" %>
         </div>
     </div>
 
-    <div class="mt-10">
+    <div class="mt-6 sm:mt-10">
       <%= button_to "Cancelar minha conta", registration_path(resource_name), data: { confirm: "Are you sure?", turbo_confirm: "Are you sure?" }, method: :delete, class: "block w-full rounded-md bg-red-600 px-3.5 py-2.5 text-center text-sm font-semibold text-white shadow-xs hover:bg-red-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"%>
-      <%= link_to "Back", :back, class: "font-semibold text-indigo-400 hover:text-indigo-300" %>
+      <%= link_to "Voltar", :back, class: "mt-4 inline-block text-sm font-semibold text-indigo-400 hover:text-indigo-300" %>
     </div>
 
   <% end %>

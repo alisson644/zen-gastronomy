@@ -28,6 +28,15 @@ module ZenGastronomy
     # Common ones are `templates`, `generators`, or `middleware`, for example.
     config.autoload_lib(ignore: %w[assets tasks])
 
+    # Source - https://stackoverflow.com/a
+    # Posted by Qasim Ali, modified by community. See post 'Timeline' for change history
+    # Retrieved 2025-11-27, License - CC BY-SA 4.0
+
+    config.active_record.encryption.primary_key = Rails.application.credentials[:active_record_encryption][:primary_key]
+    config.active_record.encryption.deterministic_key = Rails.application.credentials[:active_record_encryption][:deterministic_key]
+    config.active_record.encryption.key_derivation_salt = Rails.application.credentials[:active_record_encryption][:key_derivation_salt]
+
+
     # Configuration for the application, engines, and railties goes here.
     #
     # These settings can be overridden in specific environments using the files

@@ -1,0 +1,27 @@
+<header class="relative bg-white shadow-sm">
+  <div class="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-6 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
+    <h1 class="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">Financeiro</h1>
+    <div class="grid grid-cols-2 gap-3 sm:flex">
+      <button type="button" command="show-modal" commandfor="account" class="rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-xs outline-1 -outline-offset-1 outline-gray-300 hover:bg-gray-50">
+        Nova conta
+      </button>
+      <button type="button" command="show-modal" commandfor="transaction" class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-indigo-500">
+        Nova transação
+      </button>
+    </div>
+  </div>
+</header>
+<main>
+  <div class="mx-auto grid max-w-7xl grid-cols-1 gap-6 px-4 py-6 sm:px-6 lg:grid-cols-3 lg:px-8">
+    <section class="lg:col-span-1">
+      <%= render "financial/summary", accounts: @accounts %>
+    </section>
+    <section class="min-w-0 lg:col-span-2">
+      <%= render "financial/movements_table", movements: @movements %>
+    </section>
+  </div>
+</main>
+<%= render "partials/modal_create_account", account: @account %>
+<%= render "partials/modal_create_transaction", movement: @movement, accounts: @accounts, categories: @categories %>
+<%= render "partials/modal_create_category", category: Category.new %>
+<%= render "partials/modal_create_subcategory", subcategory: Subcategory.new, categories: @categories %>

@@ -1,0 +1,29 @@
+<% input_class = "block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" %>
+<% label_class = "block text-sm/6 font-medium text-gray-900" %>
+<div id="subcategory_form">
+  <%= form_with model: subcategory, data: { controller: "modal-form", action: "turbo:submit-end->modal-form#close" } do |form| %>
+    <h2 class="text-base/7 font-semibold text-gray-900">NOVA SUBCATEGORIA</h2>
+    <%= render "partials/form_errors", record: subcategory %>
+
+    <div class="grid gap-y-6 mt-3 text-left">
+      <div>
+        <%= form.label :category_id, "Categoria", class: label_class %>
+        <div class="mt-2">
+          <%= form.collection_select :category_id, categories, :id, :name, { prompt: "Selecione a categoria" }, required: true, class: input_class %>
+        </div>
+      </div>
+
+      <div>
+        <%= form.label :name, "Nome da subcategoria", class: label_class %>
+        <div class="mt-2">
+          <%= form.text_field :name, placeholder: "Ex.: Embalagens", required: true, class: input_class %>
+        </div>
+      </div>
+
+      <div class="flex flex-col-reverse gap-3 sm:flex-row">
+        <button type="button" command="close" commandfor="subcategory" class="w-full rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 outline-1 outline-gray-300 hover:bg-gray-50">Cancelar</button>
+        <%= form.submit "Salvar", class: "w-full rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white hover:bg-indigo-500" %>
+      </div>
+    </div>
+  <% end %>
+</div>

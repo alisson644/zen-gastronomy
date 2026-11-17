@@ -1,0 +1,25 @@
+<%
+  bg_colors = ["rgba(255, 99, 132, 0.2)", "rgba(255, 159, 64, 0.2)", "rgba(255, 205, 86, 0.2)", "rgba(75, 192, 192, 0.2)", "rgba(54, 162, 235, 0.2)", "rgba(153, 102, 255, 0.2)", "rgba(201, 203, 207, 0.2)"]
+  border_colors = ["rgb(255, 99, 132)", "rgb(255, 159, 64)", "rgb(255, 205, 86)", "rgb(75, 192, 192)", "rgb(54, 162, 235)", "rgb(153, 102, 255)", "rgb(201, 203, 207)"]
+  chart_data = {
+    labels: accounts.map(&:name),
+    datasets: [ {
+      label: "Contas",
+      backgroundColor: bg_colors,
+      borderColor: border_colors,
+      borderWidth: 1,
+      data: accounts.map { |a| a.current_balance.to_f }
+    } ]
+  }
+%>
+<div id="financial_summary" class="flex w-full flex-col rounded-lg border border-slate-200 bg-white shadow-sm">
+  <div class="p-4 sm:p-6">
+    <p class="text-sm text-slate-500">Saldo total</p>
+    <p class="mb-4 text-2xl font-semibold text-slate-800 sm:text-3xl">
+      <%= number_to_currency accounts.sum { |a| a.current_balance.to_d }, precision: 2, unit: "R$", separator: ",", delimiter: "." %>
+    </p>
+    <div class="relative h-64 w-full sm:h-72">
+      <%= tag.canvas data: { controller: "chartjs", chartjs_type_value: "bar", chartjs_data_value: chart_data.to_json, chartjs_options_value: { maintainAspectRatio: false, responsive: true, plugins: { legend: { display: false } } }.to_json } %>
+    </div>
+  </div>
+</div>

@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  get "financial/index"
   get "home/index"
   devise_for :users
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
@@ -13,4 +14,9 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   root "home#index"
+  resources :companies
+  resources :accounts
+  resources :movements
+  resources :categories, only: [ :create ]
+  resources :subcategories, only: [ :create ]
 end

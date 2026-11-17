@@ -1,25 +1,37 @@
-<h2>Change your password</h2>
-
-<%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :put }) do |f| %>
-  <%= render "devise/shared/error_messages", resource: resource %>
-  <%= f.hidden_field :reset_password_token %>
-
-  <div class="field">
-    <%= f.label :password, "New password" %><br />
-    <% if @minimum_password_length %>
-      <em>(<%= @minimum_password_length %> characters minimum)</em><br />
-    <% end %>
-    <%= f.password_field :password, autofocus: true, autocomplete: "new-password" %>
+<% input_class = "block w-full rounded-md bg-white px-3.5 py-2 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600" %>
+<div class="relative isolate overflow-hidden bg-white px-4 py-12 sm:px-6 sm:py-32 lg:px-8">
+  <div class="mx-auto max-w-2xl text-center">
+    <h2 class="text-3xl font-semibold tracking-tight text-balance text-gray-900 sm:text-5xl">Alterar senha</h2>
   </div>
+  <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :put, class: "mx-auto mt-8 max-w-xl sm:mt-16" }) do |f| %>
+    <%= render "devise/shared/error_messages", resource: resource %>
+    <%= f.hidden_field :reset_password_token %>
 
-  <div class="field">
-    <%= f.label :password_confirmation, "Confirm new password" %><br />
-    <%= f.password_field :password_confirmation, autocomplete: "new-password" %>
-  </div>
+    <div class="grid grid-cols-1 gap-y-6">
+      <div>
+        <%= f.label :password, "Nova senha", class: "block text-sm/6 font-semibold text-gray-900" %>
+        <% if @minimum_password_length %>
+          <p class="text-xs text-gray-500">Mínimo de <%= @minimum_password_length %> caracteres</p>
+        <% end %>
+        <div class="mt-2.5">
+          <%= f.password_field :password, autofocus: true, autocomplete: "new-password", class: input_class %>
+        </div>
+      </div>
 
-  <div class="actions">
-    <%= f.submit "Change my password" %>
-  </div>
-<% end %>
+      <div>
+        <%= f.label :password_confirmation, "Confirme a nova senha", class: "block text-sm/6 font-semibold text-gray-900" %>
+        <div class="mt-2.5">
+          <%= f.password_field :password_confirmation, autocomplete: "new-password", class: input_class %>
+        </div>
+      </div>
 
-<%= render "devise/shared/links" %>
+      <div class="mt-6 sm:mt-10">
+        <%= f.submit "Alterar minha senha", class: "block w-full rounded-md bg-indigo-600 px-3.5 py-2.5 text-center text-sm font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" %>
+      </div>
+    </div>
+
+    <div class="mt-4 flex flex-col gap-2 text-sm sm:flex-row sm:gap-6">
+      <%= render "devise/shared/links" %>
+    </div>
+  <% end %>
+</div>

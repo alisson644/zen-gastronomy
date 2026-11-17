@@ -1,0 +1,30 @@
+<div id="movements_table" class="w-full rounded-lg border border-slate-200 bg-white text-gray-700 shadow-sm">
+  <div class="border-b border-slate-200 px-4 py-3">
+    <h2 class="text-base font-semibold text-slate-800">Extrato</h2>
+  </div>
+
+  <% if movements.any? %>
+    <%# Mobile: lista em cards %>
+    <ul class="divide-y divide-slate-200 md:hidden">
+      <%= render partial: "financial/movement_card", collection: movements, as: :movement %>
+    </ul>
+
+    <%# Tablet/desktop: tabela %>
+    <div class="hidden overflow-x-auto md:block">
+      <table class="w-full table-auto text-left">
+        <thead>
+          <tr>
+            <% [["Conta", ""], ["Categoria", ""], ["Tipo", ""], ["Valor", ""], ["Data", ""], ["Descrição", "hidden lg:table-cell"]].each do |header, extra| %>
+              <th class="border-b border-slate-300 bg-slate-50 px-4 py-3 text-sm font-normal text-slate-500 <%= extra %>"><%= header %></th>
+            <% end %>
+          </tr>
+        </thead>
+        <tbody id="movements">
+          <%= render partial: "financial/movement", collection: movements, as: :movement %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <p class="p-6 text-center text-sm text-slate-500">Nenhuma transação registrada.</p>
+  <% end %>
+</div>
