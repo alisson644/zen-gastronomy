@@ -12,3 +12,6 @@ application.register("modal-form", ModalFormController)
 
 import CurrencyInputController from "./currency_input_controller"
 application.register("currency-input", CurrencyInputController)
+
+import MoneyChartController from "./money_chart_controller"
+application.register("money-chart", MoneyChartController)
