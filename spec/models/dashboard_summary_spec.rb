@@ -43,11 +43,11 @@ RSpec.describe DashboardSummary do
   end
 
   it "ranks expenses by category, largest first" do
-    expect(summary.expenses_by_category).to eq([["Custo com Ocupação", 300], ["Despesas Variáveis - CMV", 200]])
+    expect(summary.expenses_by_category).to eq([ [ "Custo com Ocupação", 300 ], [ "Despesas Variáveis - CMV", 200 ] ])
   end
 
   it "ranks income by subcategory" do
-    expect(summary.income_by_subcategory).to eq([["Pix", 1000]])
+    expect(summary.income_by_subcategory).to eq([ [ "Pix", 1000 ] ])
   end
 
   it "builds a 6-month series ending in the selected month" do
@@ -59,10 +59,10 @@ RSpec.describe DashboardSummary do
   end
 
   it "folds the tail into 'Outros' when there are many categories" do
-    totals = (1..10).to_h { |i| ["Cat #{i}", i * 10] }
+    totals = (1..10).to_h { |i| [ "Cat #{i}", i * 10 ] }
     ranked = summary.send(:ranked, totals)
     expect(ranked.size).to eq(DashboardSummary::MAX_RANKED_ITEMS)
-    expect(ranked.last).to eq(["Outros", 10 + 20 + 30])
+    expect(ranked.last).to eq([ "Outros", 10 + 20 + 30 ])
   end
 
   it "parses the month param and falls back to the current month" do
