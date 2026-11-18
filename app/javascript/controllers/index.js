@@ -4,14 +4,17 @@
 
 import { application } from "./application"
 
+import AvatarUploadController from "./avatar_upload_controller"
+application.register("avatar-upload", AvatarUploadController)
+
+import CurrencyInputController from "./currency_input_controller"
+application.register("currency-input", CurrencyInputController)
+
 import HelloController from "./hello_controller"
 application.register("hello", HelloController)
 
 import ModalFormController from "./modal_form_controller"
 application.register("modal-form", ModalFormController)
-
-import CurrencyInputController from "./currency_input_controller"
-application.register("currency-input", CurrencyInputController)
 
 import MoneyChartController from "./money_chart_controller"
 application.register("money-chart", MoneyChartController)
