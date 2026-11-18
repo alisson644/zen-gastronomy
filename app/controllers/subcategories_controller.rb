@@ -1,4 +1,6 @@
 class SubcategoriesController < ApplicationController
+  requires_permission "categories.manage"
+  before_action :require_company!
   before_action :set_company
 
   def create
@@ -21,7 +23,7 @@ class SubcategoriesController < ApplicationController
   private
 
   def set_company
-    @company = current_user.company
+    @company = current_company
   end
 
   def subcategory_params

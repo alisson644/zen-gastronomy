@@ -16,6 +16,7 @@ RSpec.describe "Companies", type: :request do
       company = Company.last
       expect(company.name).to eq("Restaurante Zen")
       expect(user.reload.company).to eq(company)
+      expect(user.role).to eq(company.roles.find_by!(key: "dono"))
       expect(response).to redirect_to(root_path)
     end
 

@@ -2,12 +2,16 @@
   <div class="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-6 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
     <h1 class="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">Financeiro</h1>
     <div class="grid grid-cols-2 gap-3 sm:flex">
-      <button type="button" command="show-modal" commandfor="account" class="rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-xs outline-1 -outline-offset-1 outline-gray-300 hover:bg-gray-50">
-        Nova conta
-      </button>
+      <% if current_user.can?("accounts.manage") %>
+        <button type="button" command="show-modal" commandfor="account" class="rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-xs outline-1 -outline-offset-1 outline-gray-300 hover:bg-gray-50">
+          Nova conta
+        </button>
+      <% end %>
+      <% if current_user.can?("movements.create") %>
       <button type="button" command="show-modal" commandfor="transaction" class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-indigo-500">
         Nova transação
       </button>
+      <% end %>
     </div>
   </div>
 </header>
@@ -21,7 +25,13 @@
     </section>
   </div>
 </main>
-<%= render "partials/modal_create_account", account: @account %>
-<%= render "partials/modal_create_transaction", movement: @movement, accounts: @accounts, categories: @categories %>
-<%= render "partials/modal_create_category", category: Category.new %>
-<%= render "partials/modal_create_subcategory", subcategory: Subcategory.new, categories: @categories %>
+<% if current_user.can?("accounts.manage") %>
+  <%= render "partials/modal_create_account", account: @account %>
+<% end %>
+<% if current_user.can?("movements.create") %>
+  <%= render "partials/modal_create_transaction", movement: @movement, accounts: @accounts, categories: @categories %>
+<% end %>
+<% if current_user.can?("categories.manage") %>
+  <%= render "partials/modal_create_category", category: Category.new %>
+  <%= render "partials/modal_create_subcategory", subcategory: Subcategory.new, categories: @categories %>
+<% end %>

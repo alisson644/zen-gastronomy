@@ -1,0 +1,5 @@
+<% content_for :title, "Editar perfil · Zen Gastronomy" %>
+<%= render "partials/page_header", title: "Editar perfil", subtitle: @role.name %>
+<main class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+  <%= render "form", role: @role %>
+</main>

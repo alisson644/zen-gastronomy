@@ -1,0 +1,10 @@
+<% if notice.present? || alert.present? %>
+  <div class="mx-auto max-w-7xl px-4 pt-4 sm:px-6 lg:px-8">
+    <% if notice.present? %>
+      <div class="rounded-md bg-green-50 p-3 text-sm text-green-700"><%= notice %></div>
+    <% end %>
+    <% if alert.present? %>
+      <div class="rounded-md bg-red-50 p-3 text-sm text-red-700"><%= alert %></div>
+    <% end %>
+  </div>
+<% end %>

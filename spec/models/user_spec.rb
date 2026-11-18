@@ -2,6 +2,7 @@ require 'rails_helper'
 
 RSpec.describe User, type: :model do
   it { should belong_to(:company).optional(true) }
+  it { should belong_to(:role).optional }
   it { should have_many(:movements).dependent(:destroy) }
 
   it { should validate_presence_of(:username) }
@@ -9,8 +10,8 @@ RSpec.describe User, type: :model do
 
   it "with unic email valid in company" do
     company = FactoryBot.create(:company)
-    FactoryBot.create(:user, company_id: company.id, email: "test@example.com")
-    user = FactoryBot.build(:user, company_id: company.id, email: "test@example.com")
+    FactoryBot.create(:user, company: company, email: "test@example.com")
+    user = FactoryBot.build(:user, company: company, email: "test@example.com")
     expect(user).not_to be_valid
   end
 
@@ -47,6 +48,42 @@ RSpec.describe User, type: :model do
       user.avatar.attach(fixture_file_upload("avatar.png", "image/png"))
       user.update!(remove_avatar: true)
       expect(user.reload.avatar).not_to be_attached
+    end
+  end
+
+  describe "role" do
+    it "has no role right after sign-up (no company yet)" do
+      user = create(:user, company: nil)
+      expect(user.role).to be_nil
+      expect(user.can?("dashboard.view")).to be false
+    end
+
+    it "requires a role once the user belongs to a company" do
+      user = build(:user, role: nil)
+      expect(user).not_to be_valid
+      expect(user.errors[:role]).to be_present
+    end
+
+    it "only accepts roles of the user's own company" do
+      user = build(:user)
+      user.role = create(:company).roles.find_by!(key: "administrativo")
+      expect(user).not_to be_valid
+      expect(user.errors[:role]).to be_present
+    end
+
+    it "accepts the global system admin role" do
+      expect(build(:user, role: Role.admin!)).to be_valid
+    end
+
+    it "answers permissions through can?" do
+      administrativo = create(:user, :administrativo)
+      expect(administrativo.can?("financial.view")).to be true
+      expect(administrativo.can?("dashboard.view")).to be false
+    end
+
+    it "knows who is a system admin" do
+      expect(create(:user, :admin)).to be_system_admin
+      expect(create(:user)).not_to be_system_admin
     end
   end
 end

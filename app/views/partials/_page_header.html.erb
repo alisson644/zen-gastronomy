@@ -1,0 +1,12 @@
+<%# Cabeçalho padrão das páginas internas. locals: title, subtitle (opcional); bloco opcional com ações %>
+<header class="relative bg-white shadow-sm">
+  <div class="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-6 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
+    <div>
+      <h1 class="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl"><%= title %></h1>
+      <% if local_assigns[:subtitle].present? %>
+        <p class="mt-1 text-sm text-gray-500"><%= subtitle %></p>
+      <% end %>
+    </div>
+    <%= yield if block_given? %>
+  </div>
+</header>
