@@ -13,7 +13,7 @@ bin/setup                      # install deps, prepare DB
 bin/dev                        # foreman: rails server + esbuild watch + tailwind watch (Procfile.dev)
 bin/rails db:migrate           # schema lives in db/schema.rb
 
-bundle exec rspec                                  # full test suite (RSpec, not Minitest)
+bin/rspec                                          # full test suite (RSpec, not Minitest); never plain `rspec` (gem version clash)
 bundle exec rspec spec/models/movement_spec.rb     # single file
 bundle exec rspec spec/models/movement_spec.rb:42  # single example by line
 
