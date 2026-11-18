@@ -1,0 +1,6 @@
+<% if viewing_company? %>
+  <div class="flex flex-wrap items-center justify-between gap-2 bg-amber-50 px-4 py-2 text-sm text-amber-800 sm:px-6 lg:px-8">
+    <span>Visualizando: <strong><%= current_company.name %></strong></span>
+    <%= button_to "Sair da empresa", admin_company_view_path, method: :delete, class: "font-semibold text-amber-900 underline hover:text-amber-700" %>
+  </div>
+<% end %>

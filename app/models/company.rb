@@ -1,5 +1,6 @@
 class Company < ApplicationRecord
   has_many :users, dependent: :destroy
+  has_many :roles, dependent: :destroy
   has_many :accounts, dependent: :destroy
   has_many :categories, dependent: :destroy
   has_many :subcategories, dependent: :destroy
@@ -10,6 +11,7 @@ class Company < ApplicationRecord
 
   encrypts :cnpj
 
+  after_create { Role.create_defaults_for!(self) }
   after_create_commit :create_settings_initial
 
 

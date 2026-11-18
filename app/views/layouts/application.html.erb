@@ -28,6 +28,8 @@
      <div data-controller="sidebar" class="group/layout min-h-screen">
        <%= render 'partials/navbar'%>
        <main class="md:pl-64 md:group-data-collapsed/layout:pl-20 group-data-animate/layout:transition-[padding] duration-200">
+         <%= render 'partials/viewing_company_banner' %>
+         <%= render 'partials/flash' unless devise_controller? %>
          <%= render 'partials/modal_create_company'%>
          <%= yield %>
        </main>

@@ -1,4 +1,6 @@
 class MovementsController < ApplicationController
+  requires_permission "movements.create"
+  before_action :require_company!
   before_action :set_company
 
   def create
@@ -22,7 +24,7 @@ class MovementsController < ApplicationController
   private
 
   def set_company
-    @company = current_user.company
+    @company = current_company
   end
 
   def accounts

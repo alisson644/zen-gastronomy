@@ -14,7 +14,16 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   root "home#index"
-  resources :companies
+  resources :companies, only: [ :create ]
+  resources :team_members, only: [ :index, :new, :create, :destroy ] do
+    resource :password, only: [ :edit, :update ], controller: "team_member_passwords"
+  end
+  resources :roles, except: [ :show ]
+
+  namespace :admin do
+    resources :companies, only: [ :index ]
+    resource :company_view, only: [ :create, :destroy ]
+  end
   resource :avatar, only: [ :update ]
   resources :accounts
   resources :movements

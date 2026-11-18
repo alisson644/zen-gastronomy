@@ -1,0 +1,35 @@
+<% content_for :title, "Equipe · Zen Gastronomy" %>
+
+<%= render layout: "partials/page_header", locals: { title: "Equipe", subtitle: "Pessoas com acesso a #{current_company.name}" } do %>
+  <%= link_to "Novo membro", new_team_member_path, class: "rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-xs hover:bg-indigo-500" %>
+<% end %>
+
+<main class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+  <div class="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
+    <ul role="list" class="divide-y divide-slate-100">
+      <% @members.each do |member| %>
+        <li class="flex items-center justify-between gap-x-4 px-4 py-4 sm:px-6">
+          <div class="flex min-w-0 items-center gap-x-3">
+            <%= user_avatar_tag(member, "size-10 shrink-0") %>
+            <div class="min-w-0">
+              <p class="truncate text-sm font-semibold text-gray-900">
+                <%= member.username %>
+                <% if member == current_user %><span class="font-normal text-gray-500">(você)</span><% end %>
+              </p>
+              <p class="truncate text-sm text-gray-500"><%= member.email %></p>
+            </div>
+          </div>
+          <div class="flex shrink-0 items-center gap-x-4">
+            <span class="rounded-md bg-indigo-50 px-2 py-1 text-xs font-medium text-indigo-700 ring-1 ring-indigo-700/10 ring-inset"><%= member.role.name %></span>
+            <% unless member == current_user %>
+              <%= link_to "Trocar senha", edit_team_member_password_path(member), class: "text-sm font-semibold text-indigo-600 hover:text-indigo-500" %>
+              <%= button_to "Remover", team_member_path(member), method: :delete,
+                    data: { turbo_confirm: "Remover #{member.username} da equipe?" },
+                    class: "text-sm font-semibold text-red-600 hover:text-red-500" %>
+            <% end %>
+          </div>
+        </li>
+      <% end %>
+    </ul>
+  </div>
+</main>

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_11_18_192225) do
+ActiveRecord::Schema[8.0].define(version: 2026_11_18_220000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -92,6 +92,21 @@ ActiveRecord::Schema[8.0].define(version: 2026_11_18_192225) do
     t.index ["subcategory_id"], name: "index_movements_on_subcategory_id"
   end
 
+  create_table "roles", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "key"
+    t.boolean "system", default: false, null: false
+    t.string "permissions", default: [], null: false, array: true
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "company_id"
+    t.index ["company_id", "key"], name: "index_roles_on_company_id_and_key", unique: true
+    t.index ["company_id", "name"], name: "index_roles_on_company_id_and_name", unique: true
+    t.index ["company_id"], name: "index_roles_on_company_id"
+    t.index ["key"], name: "index_roles_on_global_key", unique: true, where: "(company_id IS NULL)"
+    t.index ["name"], name: "index_roles_on_global_name", unique: true, where: "(company_id IS NULL)"
+  end
+
   create_table "subcategories", force: :cascade do |t|
     t.string "name"
     t.bigint "company_id", null: false
@@ -112,9 +127,11 @@ ActiveRecord::Schema[8.0].define(version: 2026_11_18_192225) do
     t.datetime "updated_at", null: false
     t.string "username"
     t.bigint "company_id"
+    t.bigint "role_id"
     t.index ["company_id"], name: "index_users_on_company_id"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+    t.index ["role_id"], name: "index_users_on_role_id"
   end
 
   add_foreign_key "accounts", "companies"
@@ -127,7 +144,9 @@ ActiveRecord::Schema[8.0].define(version: 2026_11_18_192225) do
   add_foreign_key "movements", "companies"
   add_foreign_key "movements", "subcategories"
   add_foreign_key "movements", "users", column: "created_by_id", on_delete: :nullify
+  add_foreign_key "roles", "companies"
   add_foreign_key "subcategories", "categories"
   add_foreign_key "subcategories", "companies"
   add_foreign_key "users", "companies"
+  add_foreign_key "users", "roles"
 end

@@ -7,3 +7,7 @@
 #   ["Action", "Comedy", "Drama", "Horror"].each do |genre_name|
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
+
+# Perfil global de admin e perfis padrão de cada empresa (idempotente).
+Role.admin!
+Company.find_each { |company| Role.create_defaults_for!(company) }

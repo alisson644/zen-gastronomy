@@ -1,0 +1,30 @@
+<% content_for :title, "Empresas · Zen Gastronomy" %>
+
+<%= render "partials/page_header", title: "Empresas", subtitle: "Todas as empresas cadastradas no sistema" %>
+
+<main class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+  <div class="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
+    <% if @companies.empty? %>
+      <p class="p-6 text-sm text-gray-500">Nenhuma empresa cadastrada.</p>
+    <% else %>
+      <ul role="list" class="divide-y divide-slate-100">
+        <% @companies.each do |company| %>
+          <li class="flex flex-col gap-3 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+            <div class="min-w-0">
+              <p class="truncate text-sm font-semibold text-gray-900"><%= company.name %></p>
+              <p class="text-sm text-gray-500">
+                <%= company.cnpj.presence || "Sem CNPJ" %> · <%= pluralize(company.users_count, "usuário", plural: "usuários") %>
+              </p>
+            </div>
+            <% if current_company == company %>
+              <span class="rounded-md bg-amber-50 px-2 py-1 text-xs font-medium text-amber-800 ring-1 ring-amber-600/20 ring-inset">Visualizando</span>
+            <% else %>
+              <%= button_to "Visualizar", admin_company_view_path(company_id: company.id),
+                    class: "w-full rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-xs outline-1 -outline-offset-1 outline-gray-300 hover:bg-gray-50 sm:w-auto" %>
+            <% end %>
+          </li>
+        <% end %>
+      </ul>
+    <% end %>
+  </div>
+</main>

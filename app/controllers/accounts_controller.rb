@@ -1,4 +1,6 @@
 class AccountsController < ApplicationController
+  requires_permission "accounts.manage"
+  before_action :require_company!
   before_action :set_company, only: [ :create ]
 
   def create
@@ -20,7 +22,7 @@ class AccountsController < ApplicationController
   private
 
   def set_company
-    @company = current_user.company
+    @company = current_company
   end
 
   def account_params

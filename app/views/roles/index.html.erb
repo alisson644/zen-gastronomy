@@ -1,0 +1,36 @@
+<% content_for :title, "Perfis · Zen Gastronomy" %>
+
+<%= render layout: "partials/page_header", locals: { title: "Perfis", subtitle: "O que cada perfil pode fazer em #{current_company.name}" } do %>
+  <%= link_to "Novo perfil", new_role_path, class: "rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-xs hover:bg-indigo-500" %>
+<% end %>
+
+<main class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+  <div class="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
+    <ul role="list" class="divide-y divide-slate-100">
+      <% @roles.each do |role| %>
+        <li class="flex flex-col gap-3 px-4 py-4 sm:flex-row sm:items-start sm:justify-between sm:px-6">
+          <div class="min-w-0">
+            <p class="text-sm font-semibold text-gray-900">
+              <%= role.name %>
+              <% if role.system? %><span class="ml-1 rounded bg-gray-100 px-1.5 py-0.5 text-xs font-medium text-gray-600">padrão</span><% end %>
+            </p>
+            <p class="mt-1 text-sm text-gray-500"><%= pluralize(role.users_count, "usuário", plural: "usuários") %></p>
+            <div class="mt-2 flex flex-wrap gap-1.5">
+              <% role.effective_permissions.each do |permission| %>
+                <span class="rounded-md bg-slate-50 px-2 py-0.5 text-xs text-slate-700 ring-1 ring-slate-200 ring-inset"><%= Permission.label(permission) %></span>
+              <% end %>
+            </div>
+          </div>
+          <div class="flex shrink-0 items-center gap-x-4">
+            <%= link_to "Editar", edit_role_path(role), class: "text-sm font-semibold text-indigo-600 hover:text-indigo-500" %>
+            <% unless role.system? %>
+              <%= button_to "Excluir", role_path(role), method: :delete,
+                    data: { turbo_confirm: "Excluir o perfil #{role.name}?" },
+                    class: "text-sm font-semibold text-red-600 hover:text-red-500" %>
+            <% end %>
+          </div>
+        </li>
+      <% end %>
+    </ul>
+  </div>
+</main>

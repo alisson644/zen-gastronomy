@@ -1,0 +1,38 @@
+<% input_class = "block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" %>
+<% locked = role.locked? %>
+
+<div class="max-w-xl rounded-lg border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
+  <%= form_with model: role, class: "space-y-6" do |f| %>
+    <%= render "partials/form_errors", record: role %>
+
+    <div>
+      <%= f.label :name, "Nome do perfil", class: "block text-sm/6 font-medium text-gray-900" %>
+      <div class="mt-2"><%= f.text_field :name, required: true, autofocus: true, class: input_class %></div>
+    </div>
+
+    <fieldset>
+      <legend class="text-sm/6 font-medium text-gray-900">Permissões</legend>
+      <% if locked %>
+        <p class="mt-1 text-xs text-amber-700">O perfil Dono sempre tem todas as permissões da empresa.</p>
+      <% end %>
+      <%= hidden_field_tag "role[permissions][]", "", id: nil %>
+      <div class="mt-3 space-y-3">
+        <% Permission::COMPANY.each do |key| %>
+          <label class="flex items-start gap-x-3">
+            <%= check_box_tag "role[permissions][]", key, role.allows?(key),
+                  id: "permission_#{key.parameterize(separator: "_")}", disabled: locked,
+                  class: "mt-1 size-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600" %>
+            <span class="text-sm text-gray-700">
+              <%= Permission.label(key) %>
+            </span>
+          </label>
+        <% end %>
+      </div>
+    </fieldset>
+
+    <div class="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+      <%= link_to "Cancelar", roles_path, class: "rounded-md bg-white px-3 py-2 text-center text-sm font-semibold text-gray-900 outline-1 outline-gray-300 hover:bg-gray-50" %>
+      <%= f.submit "Salvar perfil", class: "rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white hover:bg-indigo-500" %>
+    </div>
+  <% end %>
+</div>

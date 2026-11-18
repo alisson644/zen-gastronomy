@@ -2,6 +2,7 @@ require 'rails_helper'
 
 RSpec.describe Company, type: :model do
   it { should have_many(:users).dependent(:destroy) }
+  it { should have_many(:roles).dependent(:destroy) }
   it { should have_many(:accounts).dependent(:destroy) }
   it { should have_many(:categories).dependent(:destroy) }
   it { should have_many(:subcategories).dependent(:destroy) }
