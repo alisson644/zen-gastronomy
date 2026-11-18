@@ -80,6 +80,6 @@ class DashboardSummary
     return sorted if sorted.size <= MAX_RANKED_ITEMS
 
     head = sorted.first(MAX_RANKED_ITEMS - 1)
-    head + [["Outros", sorted.drop(MAX_RANKED_ITEMS - 1).sum { |_name, value| value }]]
+    head + [ [ "Outros", sorted.drop(MAX_RANKED_ITEMS - 1).sum { |_name, value| value } ] ]
   end
 end
