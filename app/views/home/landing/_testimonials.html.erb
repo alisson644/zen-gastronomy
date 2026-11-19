@@ -1,0 +1,26 @@
+<section class="py-20 sm:py-28">
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <div class="mx-auto max-w-2xl text-center">
+      <p class="text-sm font-semibold text-indigo-600">Depoimentos</p>
+      <h2 class="mt-2 text-balance text-3xl font-bold tracking-tight sm:text-4xl">Quem usa, não volta para a planilha</h2>
+    </div>
+    <div class="mt-14 grid gap-6 lg:grid-cols-3">
+      <% [
+           [ "Em dois meses descobri que estava pagando caro demais em proteína. Só isso já pagou o sistema por um ano.", "Marina S.", "Bistrô · São Paulo" ],
+           [ "Antes eu fechava o mês no susto. Hoje abro o dashboard e sei na hora se o mês vai fechar no azul.", "Roberto A.", "Pizzaria · Belo Horizonte" ],
+           [ "Minha gerente lança tudo e eu só acompanho. Finalmente tirei o financeiro das minhas noites.", "Fernanda L.", "Hamburgueria · Curitiba" ]
+         ].each do |quote, name, place| %>
+        <figure class="flex flex-col rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+          <div class="flex gap-0.5 text-amber-400" aria-label="5 estrelas">
+            <% 5.times do %><svg viewBox="0 0 20 20" fill="currentColor" class="size-4" aria-hidden="true"><path d="M10 1.5l2.6 5.3 5.9.9-4.25 4.1 1 5.8L10 14.9l-5.25 2.7 1-5.8L1.5 7.7l5.9-.9L10 1.5z"/></svg><% end %>
+          </div>
+          <blockquote class="mt-4 flex-1 text-slate-700">“<%= quote %>”</blockquote>
+          <figcaption class="mt-6 flex items-center gap-3">
+            <span class="flex size-10 items-center justify-center rounded-full bg-indigo-100 text-sm font-semibold text-indigo-700"><%= name.first %></span>
+            <span><span class="block text-sm font-semibold text-slate-900"><%= name %></span><span class="block text-xs text-slate-500"><%= place %></span></span>
+          </figcaption>
+        </figure>
+      <% end %>
+    </div>
+  </div>
+</section>

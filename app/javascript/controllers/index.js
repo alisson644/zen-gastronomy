@@ -19,6 +19,9 @@ application.register("modal-form", ModalFormController)
 import MoneyChartController from "./money_chart_controller"
 application.register("money-chart", MoneyChartController)
 
+import PricingToggleController from "./pricing_toggle_controller"
+application.register("pricing-toggle", PricingToggleController)
+
 import RegistrationStepsController from "./registration_steps_controller"
 application.register("registration-steps", RegistrationStepsController)
 

@@ -1,0 +1,22 @@
+<section id="duvidas" class="scroll-mt-20 py-20 sm:py-28">
+  <div class="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
+    <h2 class="text-center text-3xl font-bold tracking-tight sm:text-4xl">Perguntas frequentes</h2>
+    <div class="mt-12 divide-y divide-slate-200 border-y border-slate-200">
+      <% [
+           [ "Como funciona o teste grátis?", "Você cria a conta, cadastra seu restaurante e usa tudo por 14 dias. Não pedimos cartão de crédito para começar." ],
+           [ "Preciso configurar categorias antes de usar?", "Não. Sua empresa já nasce com 12 categorias e mais de 70 subcategorias de restaurante, além da conta Caixa Dinheiro. Você pode criar as suas quando quiser." ],
+           [ "Posso cancelar quando quiser?", "Sim. Não há fidelidade nem multa: você continua com acesso até o fim do período pago." ],
+           [ "Meus dados estão seguros?", "Cada empresa tem seus dados isolados, o acesso é protegido por senha e informações sensíveis, como o CNPJ, ficam criptografadas." ],
+           [ "Consigo dar acesso para minha equipe?", "Sim. Adicione pessoas à equipe e escolha o perfil de cada uma — inclusive perfis personalizados com só as permissões necessárias." ]
+         ].each do |question, answer| %>
+        <details class="group py-5">
+          <summary class="flex cursor-pointer list-none items-center justify-between gap-4 font-semibold text-slate-900 [&::-webkit-details-marker]:hidden">
+            <%= question %>
+            <svg viewBox="0 0 20 20" fill="currentColor" class="size-5 shrink-0 text-slate-400 transition group-open:rotate-45" aria-hidden="true"><path d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z" /></svg>
+          </summary>
+          <p class="mt-3 text-sm text-slate-600"><%= answer %></p>
+        </details>
+      <% end %>
+    </div>
+  </div>
+</section>

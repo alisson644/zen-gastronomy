@@ -1,0 +1,71 @@
+<% income = "#2a78d6" %>
+<% expense = "#eb6834" %>
+<section class="relative isolate pt-14 sm:pt-20">
+  <div aria-hidden="true" class="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-60">
+    <div style="clip-path: polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)" class="relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-[#ff80b5] to-[#9089fc] opacity-25 sm:left-[calc(50%-30rem)] sm:w-[72rem]"></div>
+  </div>
+
+  <div class="mx-auto max-w-3xl px-4 text-center sm:px-6">
+    <p class="inline-flex items-center gap-2 rounded-full bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-700 ring-1 ring-indigo-200">
+      <span class="size-1.5 rounded-full bg-indigo-500"></span> Feito para restaurantes brasileiros
+    </p>
+    <h1 class="mt-6 text-balance text-4xl font-bold tracking-tight sm:text-6xl">
+      Pare de adivinhar.
+      <span class="block text-indigo-600">Saiba exatamente quanto seu restaurante lucra.</span>
+    </h1>
+    <p class="mx-auto mt-6 max-w-2xl text-pretty text-base text-slate-600 sm:text-lg">
+      Entradas, despesas, contas e equipe num só lugar. O Zen Gastronomy organiza o financeiro do seu
+      restaurante para você voltar a cuidar do que importa: a cozinha e os clientes.
+    </p>
+    <div class="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-4">
+      <%= link_to "Criar conta grátis", new_user_registration_path, class: "w-full rounded-md bg-indigo-600 px-5 py-3 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 sm:w-auto" %>
+      <a href="#planos" class="w-full rounded-md bg-white px-5 py-3 text-center text-sm font-semibold text-slate-900 shadow-sm ring-1 ring-slate-300 hover:bg-slate-50 sm:w-auto">Ver planos</a>
+    </div>
+    <p class="mt-4 text-xs text-slate-500">14 dias grátis · sem cartão de crédito · cancele quando quiser</p>
+  </div>
+
+  <div class="mx-auto mt-14 max-w-6xl px-4 pb-16 sm:mt-20 sm:px-6 lg:px-8">
+    <%= render layout: "home/landing/browser_frame", locals: { url: "/" } do %>
+      <div class="space-y-4 p-4 sm:p-6">
+        <div class="flex items-center justify-between">
+          <p class="text-lg font-bold text-slate-900">Dashboard</p>
+          <span class="rounded-md bg-white px-3 py-1 text-xs font-semibold text-slate-700 ring-1 ring-slate-200">Novembro de 2026</span>
+        </div>
+        <div class="grid grid-cols-2 gap-3 lg:grid-cols-4">
+          <%= render "home/stat_tile", label: "Entradas no mês", value: 148_320.90, change: 12.4, swatch: income %>
+          <%= render "home/stat_tile", label: "Gasto no mês", value: 103_874.15, change: -3.8, swatch: expense %>
+          <%= render "home/stat_tile", label: "Resultado do mês", value: 44_446.75, hint: "Entradas menos despesas" %>
+          <%= render "home/stat_tile", label: "Saldo atual em contas", value: 212_905.32, hint: "Soma de todas as contas" %>
+        </div>
+        <div class="grid gap-3 lg:grid-cols-3">
+          <div class="rounded-lg border border-slate-200 bg-white p-4 shadow-sm lg:col-span-2">
+            <p class="text-sm font-semibold text-slate-800">Entradas e despesas</p>
+            <p class="text-xs text-slate-500">Últimos 6 meses</p>
+            <div class="mt-4 flex h-40 items-end justify-between gap-2 sm:gap-4">
+              <% [ [ "Jun", 62, 51 ], [ "Jul", 70, 55 ], [ "Ago", 66, 58 ], [ "Set", 78, 60 ], [ "Out", 84, 63 ], [ "Nov", 95, 66 ] ].each do |month, inc, exp| %>
+                <div class="flex flex-1 flex-col items-center gap-1">
+                  <div class="flex h-36 w-full items-end justify-center gap-1">
+                    <span class="w-1/3 max-w-5 rounded-t" style="height: <%= inc %>%; background: <%= income %>"></span>
+                    <span class="w-1/3 max-w-5 rounded-t" style="height: <%= exp %>%; background: <%= expense %>"></span>
+                  </div>
+                  <span class="text-[10px] text-slate-500"><%= month %></span>
+                </div>
+              <% end %>
+            </div>
+          </div>
+          <div class="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+            <p class="text-sm font-semibold text-slate-800">Maiores despesas</p>
+            <ul class="mt-3 space-y-3 text-xs">
+              <% [ [ "Despesas fixas - CMO", 38_210, 100 ], [ "Despesas Variáveis - CMV", 29_480, 77 ], [ "Custo com Ocupação", 14_900, 39 ], [ "CMV - Bebidas", 9_870, 26 ], [ "Outros", 11_414, 30 ] ].each do |name, value, pct| %>
+                <li>
+                  <div class="flex justify-between gap-2 text-slate-600"><span class="truncate"><%= name %></span><span class="font-medium text-slate-800"><%= brl(value) %></span></div>
+                  <div class="mt-1 h-1.5 rounded-full bg-slate-100"><div class="h-1.5 rounded-full" style="width: <%= pct %>%; background: <%= expense %>"></div></div>
+                </li>
+              <% end %>
+            </ul>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</section>
