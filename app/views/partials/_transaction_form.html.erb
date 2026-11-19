@@ -1,7 +1,7 @@
 <% input_class = "block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" %>
 <% label_class = "block text-sm/6 font-medium text-gray-900" %>
 <div id="transaction_form">
-  <%= form_with model: movement, data: { controller: "modal-form", action: "turbo:submit-end->modal-form#close" } do |form| %>
+  <%= form_with model: movement, data: { controller: "modal-form transaction-type", action: "turbo:submit-end->modal-form#close reset->transaction-type#reset" } do |form| %>
     <h2 class="text-base/7 font-semibold text-gray-900">TRANSAÇÃO</h2>
     <%= render "partials/form_errors", record: movement %>
 
@@ -9,7 +9,8 @@
       <div>
         <%= form.label :mv_type, "Tipo de transação", class: label_class %>
         <div class="mt-2">
-          <%= form.select :mv_type, [["Entrada", "entrada"], ["Saída", "saida"], ["Transferência", "transfer"]], { prompt: "Selecione o tipo de transação" }, required: true, class: input_class %>
+          <%= form.select :mv_type, [["Entrada", "entrada"], ["Saída", "saida"], ["Transferência", "transfer"]], { prompt: "Selecione o tipo de transação" }, required: true, class: input_class,
+                data: { transaction_type_target: "type", action: "change->transaction-type#update" } %>
         </div>
       </div>
 
@@ -20,14 +21,15 @@
         </div>
       </div>
 
-      <div>
-        <%= form.label :related_account_id, "Conta destino (somente transferência)", class: label_class %>
+      <div data-transaction-type-target="relatedAccount" hidden>
+        <%= form.label :related_account_id, "Conta destino", class: label_class %>
         <div class="mt-2">
-          <%= form.collection_select :related_account_id, accounts, :id, :name, { include_blank: "—" }, class: input_class %>
+          <%= form.collection_select :related_account_id, accounts, :id, :name, { prompt: "Selecione a conta destino" }, class: input_class,
+                data: { transaction_type_target: "relatedAccountSelect" } %>
         </div>
       </div>
 
-      <div>
+      <div data-transaction-type-target="category">
         <div class="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
           <%= form.label :subcategory_id, "Categoria", class: label_class %>
           <div class="flex gap-3 text-xs font-semibold text-indigo-600">

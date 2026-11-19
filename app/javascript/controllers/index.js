@@ -21,3 +21,6 @@ application.register("money-chart", MoneyChartController)
 
 import SidebarController from "./sidebar_controller"
 application.register("sidebar", SidebarController)
+
+import TransactionTypeController from "./transaction_type_controller"
+application.register("transaction-type", TransactionTypeController)

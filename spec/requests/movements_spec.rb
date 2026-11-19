@@ -7,7 +7,8 @@ RSpec.describe "Movements", type: :request do
   let(:company) { user.company }
   let!(:bank) { company.accounts.create!(name: "Banco", account_type: :banco, initial_balance: 100, current_balance: 100) }
   let!(:cash) { company.accounts.find_by!(name: "Caixa Dinheiro") }
-  let(:subcategory) { company.subcategories.first }
+  let(:subcategory) { company.subcategories.find_by!(name: "Pix") }
+  let(:expense_subcategory) { company.subcategories.find_by!(name: "Aluguel") }
 
   before { sign_in user }
 
@@ -31,14 +32,49 @@ RSpec.describe "Movements", type: :request do
   end
 
   it "decreases the balance on expense" do
-    create_movement(mv_type: "saida", amount: "30")
+    create_movement(mv_type: "saida", amount: "30", subcategory_id: expense_subcategory.id)
     expect(bank.reload.current_balance).to eq(70)
+  end
+
+  it "rejects an expense with an income category" do
+    expect { create_movement(mv_type: "saida", amount: "30") }.not_to change(Movement, :count)
+    expect(response).to have_http_status(:unprocessable_content)
+  end
+
+  it "rejects an income with an expense category" do
+    expect { create_movement(subcategory_id: expense_subcategory.id) }.not_to change(Movement, :count)
+    expect(response).to have_http_status(:unprocessable_content)
   end
 
   it "moves money between accounts on transfer" do
     create_movement(mv_type: "transfer", amount: "40", related_account_id: cash.id)
     expect(bank.reload.current_balance).to eq(60)
     expect(cash.reload.current_balance).to eq(40)
+  end
+
+  it "creates a transfer without category, ignoring any submitted subcategory" do
+    expect {
+      create_movement(mv_type: "transfer", amount: "40", related_account_id: cash.id, subcategory_id: nil)
+    }.to change(Movement, :count).by(1)
+    expect(response).to have_http_status(:ok)
+
+    create_movement(mv_type: "transfer", amount: "10", related_account_id: cash.id)
+    movement = company.movements.last
+    expect(movement.category).to be_nil
+    expect(movement.subcategory).to be_nil
+  end
+
+  it "ignores the destination account for non-transfer movements" do
+    create_movement(related_account_id: cash.id)
+    expect(company.movements.last.related_account).to be_nil
+    expect(cash.reload.current_balance).to eq(0)
+  end
+
+  it "renders the transaction form wired to toggle categories by type" do
+    get financial_index_path
+    expect(response.body).to include('data-transaction-type-target="relatedAccount"', 'data-transaction-type-target="category"')
+    expect(response.body).to match(/<optgroup[^>]*data-income="true"[^>]*label="Entrada de caixa"/)
+    expect(response.body).to match(/<optgroup[^>]*data-income="false"[^>]*label="Custo com Ocupação"/)
   end
 
   it "accepts amount with comma as decimal separator (1.234,56)" do

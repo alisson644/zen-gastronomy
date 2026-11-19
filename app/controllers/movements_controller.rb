@@ -6,7 +6,11 @@ class MovementsController < ApplicationController
   def create
     @movement = @company.movements.new(movement_params)
     @movement.creator = current_user
-    @movement.category_id = @company.subcategories.find_by(id: @movement.subcategory_id)&.category_id
+    if @movement.transfer?
+      @movement.subcategory = nil
+    else
+      @movement.category_id = @company.subcategories.find_by(id: @movement.subcategory_id)&.category_id
+    end
     @movement.account = find_account(:account_id)
     @movement.related_account = @movement.transfer? ? find_account(:related_account_id) : nil
 

@@ -1,9 +1,15 @@
 <%# Select de subcategoria (agrupado por categoria) usado no form de transação.
     Fica num partial com id próprio para ser atualizado via Turbo Stream sem
-    apagar o que o usuário já digitou no restante do formulário. %>
+    apagar o que o usuário já digitou no restante do formulário.
+    Cada optgroup leva data-income para o controller transaction-type filtrar
+    categorias de entrada/saída conforme o tipo escolhido. %>
 <% input_class = "block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" %>
 <div id="subcategory_select">
   <%= select_tag "movement[subcategory_id]",
-        grouped_options_for_select(categories.select { |c| c.subcategories.any? }.map { |c| [c.name, c.subcategories.sort_by(&:name).map { |s| [s.name, s.id] }] }, selected),
-        prompt: "Selecione a categoria", required: true, id: "movement_subcategory_id", class: input_class %>
+        safe_join(categories.select { |c| c.subcategories.any? }.map { |c|
+          content_tag(:optgroup, options_for_select(c.subcategories.sort_by(&:name).map { |s| [ s.name, s.id ] }, selected),
+                      data: { income: c.is_income }, label: c.name)
+        }),
+        prompt: "Selecione a categoria", required: true, id: "movement_subcategory_id", class: input_class,
+        data: { transaction_type_target: "subcategorySelect" } %>
 </div>
