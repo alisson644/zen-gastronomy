@@ -4,8 +4,9 @@ class Movement < ApplicationRecord
 
   belongs_to :company
   belongs_to :account
-  belongs_to :category
-  belongs_to :subcategory
+  # Transfers have no category; entrada/saida require one (see category_matches_type).
+  belongs_to :category, optional: true
+  belongs_to :subcategory, optional: true
   belongs_to :creator, class_name: "User", foreign_key: :created_by_id
   belongs_to :related_account, class_name: "Account", optional: true
 
@@ -17,6 +18,7 @@ class Movement < ApplicationRecord
   validate :accounts_belong_to_company
   validate :related_account_presence_for_transfer
   validate :related_account_differs_from_account
+  validate :category_matches_type
 
   before_update :store_old_state
   after_create  :apply_effect!
@@ -47,6 +49,17 @@ class Movement < ApplicationRecord
 
     if related_account && related_account.company_id != company_id
       errors.add(:related_account, "must belong to the same company as transaction")
+    end
+  end
+
+  # entrada needs an income category (is_income: true); saida an expense one.
+  def category_matches_type
+    return if mv_type.blank? || transfer?
+
+    if category.nil? || subcategory.nil?
+      errors.add(:category, "can't be blank")
+    elsif category.is_income != entrada?
+      errors.add(:category, entrada? ? "must be an income category" : "must be an expense category")
     end
   end
 
