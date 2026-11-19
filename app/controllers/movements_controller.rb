@@ -7,7 +7,8 @@ class MovementsController < ApplicationController
     @movement = @company.movements.new(movement_params)
     @movement.creator = current_user
     @movement.category_id = @company.subcategories.find_by(id: @movement.subcategory_id)&.category_id
-    @movement.related_account_id = nil unless @movement.transfer?
+    @movement.account = find_account(:account_id)
+    @movement.related_account = @movement.transfer? ? find_account(:related_account_id) : nil
 
     if @movement.save
       respond_to do |format|
@@ -37,6 +38,11 @@ class MovementsController < ApplicationController
   helper_method :accounts, :categories
 
   def movement_params
-    params.require(:movement).permit(:mv_type, :amount, :occurred_at, :description, :account_id, :subcategory_id, :related_account_id)
+    params.require(:movement).permit(:mv_type, :amount, :occurred_at, :description, :subcategory_id)
+  end
+
+  # Account IDs are resolved through the company so a movement can never point to another tenant's account.
+  def find_account(key)
+    @company.accounts.find_by(id: params.dig(:movement, key))
   end
 end
