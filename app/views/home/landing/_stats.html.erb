@@ -1,0 +1,10 @@
+<section class="border-y border-slate-200 bg-slate-50">
+  <dl class="mx-auto grid max-w-7xl grid-cols-2 gap-8 px-4 py-12 text-center sm:px-6 lg:grid-cols-4 lg:px-8">
+    <% [ [ "+1.200", "restaurantes organizados" ], [ "R$ 85 mi", "movimentados por mês" ], [ "4h", "economizadas por semana" ], [ "98%", "recomendam a um colega" ] ].each do |value, label| %>
+      <div>
+        <dt class="text-sm text-slate-500"><%= label %></dt>
+        <dd class="order-first text-3xl font-bold tracking-tight text-indigo-600 sm:text-4xl"><%= value %></dd>
+      </div>
+    <% end %>
+  </dl>
+</section>
