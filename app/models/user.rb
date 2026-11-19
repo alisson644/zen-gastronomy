@@ -3,6 +3,7 @@ class User < ApplicationRecord
   AVATAR_MAX_SIZE = 2.megabytes
 
   belongs_to :company, optional: true
+  accepts_nested_attributes_for :company
   belongs_to :role, optional: true
   has_many :movements, foreign_key: :created_by_id, dependent: :destroy
   has_one_attached :avatar

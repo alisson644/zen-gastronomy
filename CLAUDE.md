@@ -31,7 +31,7 @@ Tests use FactoryBot (`spec/factories`), shoulda-matchers, and transactional fix
 ## Architecture
 
 ### Multi-tenancy by Company
-Everything is scoped to a `Company`. A `User` `belongs_to :company` (optional — a freshly signed-up user has none, and the layout shows a "create company" modal). Controllers resolve the tenant via `current_company` (helper in `ApplicationController`; for a system admin it is the company chosen in `session[:viewing_company_id]`) and build records through company associations (`@company.movements.new(...)`); child IDs from params (subcategory, category) are looked up through the company to prevent cross-tenant references. `Movement` also validates that its accounts belong to the same company. Keep this pattern for any new resource.
+Everything is scoped to a `Company`. A `User` `belongs_to :company` (optional in the schema, but sign-up always creates one: `Users::RegistrationsController#create` runs a two-step form — account (with optional photo) → company — and saves the company and its owner in one transaction; the steps are the `registration-steps` Stimulus controller). A user without a company (only legacy rows) is sent to the profile page. Controllers resolve the tenant via `current_company` (helper in `ApplicationController`; for a system admin it is the company chosen in `session[:viewing_company_id]`) and build records through company associations (`@company.movements.new(...)`); child IDs from params (subcategory, category) are looked up through the company to prevent cross-tenant references. `Movement` also validates that its accounts belong to the same company. Keep this pattern for any new resource.
 
 `ApplicationController` runs `authenticate_user!` for every non-Devise controller (`HomeController` skips it for the public landing page).
 
@@ -40,7 +40,7 @@ Everything is scoped to a `Company`. A `User` `belongs_to :company` (optional �
 - Roles are per company: `Role belongs_to :company`. Every new company gets the default roles `dono` and `administrativo` (`Role.create_defaults_for!`, called from `Company after_create`). Companies edit those and create their own roles at `/roles`, which requires the `roles.manage` permission.
 - `dono` is locked: it always has every `Permission::COMPANY` key, even ones added later. Default roles cannot be deleted.
 - The only global role is "Administrador do sistema" (`Role.admin!`, `company_id: nil`). It never appears in a company's roles or team forms.
-- A `User` has no role until it has a company: `CompaniesController#create` makes the creator the `dono`. A user's role must belong to the user's own company; the global admin role is the only exception.
+- A `User` has no role until it has a company: sign-up (`Users::RegistrationsController`) makes the creator the `dono`. A user's role must belong to the user's own company; the global admin role is the only exception.
 - Check access with `current_user.can?("key")` in views, and with `requires_permission "key"` (plus `before_action :require_company!` when the page needs a tenant) in controllers. A denied GET redirects with an alert; any other verb returns 403.
 - To add a new permission: add it to `Permission::ALL` and check it in code. New roles need no code.
 - Promote a system admin with `bin/rails users:make_admin EMAIL=...`.

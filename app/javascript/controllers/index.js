@@ -19,6 +19,9 @@ application.register("modal-form", ModalFormController)
 import MoneyChartController from "./money_chart_controller"
 application.register("money-chart", MoneyChartController)
 
+import RegistrationStepsController from "./registration_steps_controller"
+application.register("registration-steps", RegistrationStepsController)
+
 import SidebarController from "./sidebar_controller"
 application.register("sidebar", SidebarController)
 
