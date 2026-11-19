@@ -19,7 +19,7 @@
       <%= number_to_currency accounts.sum { |a| a.current_balance.to_d }, precision: 2, unit: "R$", separator: ",", delimiter: "." %>
     </p>
     <div class="relative h-64 w-full sm:h-72">
-      <%= tag.canvas data: { controller: "chartjs", chartjs_type_value: "bar", chartjs_data_value: chart_data.to_json, chartjs_options_value: { maintainAspectRatio: false, responsive: true, plugins: { legend: { display: false } } }.to_json } %>
+      <%= tag.canvas data: { controller: "money-chart", money_chart_type_value: "bar", money_chart_data_value: chart_data.to_json } %>
     </div>
   </div>
 </div>
