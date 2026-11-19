@@ -3,7 +3,6 @@ class HomeController < ApplicationController
 
   def index
     return unless user_signed_in?
-    return if current_user.company.blank? && !current_user.system_admin? # modal "cadastrar empresa"
     return redirect_to(home_path_for(current_user)) unless current_user.can?("dashboard.view") && root_reachable?
     return if current_company.blank?
 

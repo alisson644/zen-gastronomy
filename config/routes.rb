@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
   get "financial/index"
   get "home/index"
-  devise_for :users
+  devise_for :users, controllers: { registrations: "users/registrations" }
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
@@ -14,7 +14,6 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   root "home#index"
-  resources :companies, only: [ :create ]
   resources :team_members, only: [ :index, :new, :create, :destroy ] do
     resource :password, only: [ :edit, :update ], controller: "team_member_passwords"
   end

@@ -1,5 +1,8 @@
 <% input_class = "block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" %>
 <% label_class = "block text-sm/6 font-medium text-gray-900" %>
+<% primary_button = "rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" %>
+<% secondary_button = "rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-xs outline-1 -outline-offset-1 outline-gray-300 hover:bg-gray-50" %>
+<% resource.build_company if resource.company.nil? %>
 <% content_for :title, "Criar conta · Zen Gastronomy" %>
 <% content_for :auth_footer do %>
   Já tem uma conta?
@@ -7,40 +10,97 @@
 <% end %>
 
 <%= render layout: "devise/shared/auth_card", locals: { title: "Crie sua conta", subtitle: "Comece a organizar as finanças do seu restaurante" } do %>
-  <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { class: "space-y-6" }) do |f| %>
+  <%= form_for(resource, as: resource_name, url: registration_path(resource_name),
+               html: { class: "space-y-6", multipart: true,
+                       data: { controller: "registration-steps" } }) do |f| %>
+    <ol class="flex items-center gap-x-3 text-sm font-medium">
+      <% [ "Sua conta", "Sua empresa" ].each_with_index do |label, index| %>
+        <% if index.positive? %><li aria-hidden="true" class="h-px flex-1 bg-gray-200"></li><% end %>
+        <li data-registration-steps-target="indicator" class="flex items-center gap-x-2 text-gray-400 data-current:text-indigo-600">
+          <span class="flex size-6 items-center justify-center rounded-full border border-current text-xs"><%= index + 1 %></span>
+          <%= label %>
+        </li>
+      <% end %>
+    </ol>
+
     <%= render "devise/shared/error_messages", resource: resource %>
 
-    <div>
-      <%= f.label :username, "Nome de usuário", class: label_class %>
-      <div class="mt-2">
-        <%= f.text_field :username, autofocus: true, autocomplete: "username", required: true, placeholder: "Seu nome", class: input_class %>
+    <section data-registration-steps-target="step" class="space-y-6">
+      <div data-controller="avatar-upload">
+        <span class="<%= label_class %>">Foto</span>
+        <div class="mt-2 flex items-center gap-x-4">
+          <%= user_avatar_tag(resource, "size-16 shrink-0 outline -outline-offset-1 outline-gray-900/10", data: { avatar_upload_target: "preview" }) %>
+          <div class="min-w-0 space-y-1">
+            <%= f.file_field :avatar, accept: User::AVATAR_CONTENT_TYPES.join(","),
+                  data: { action: "change->avatar-upload#preview" },
+                  class: "block w-full text-sm text-gray-500 file:mr-3 file:rounded-md file:border-0 file:bg-white file:px-3 file:py-2 file:text-sm file:font-semibold file:text-gray-900 file:outline-1 file:outline-gray-300 hover:file:bg-gray-50" %>
+            <p class="text-xs text-gray-500">PNG, JPG ou WEBP até 2 MB. Opcional.</p>
+          </div>
+        </div>
       </div>
-    </div>
 
-    <div>
-      <%= f.label :email, "E-mail", class: label_class %>
-      <div class="mt-2">
-        <%= f.email_field :email, autocomplete: "email", required: true, placeholder: "voce@restaurante.com", class: input_class %>
+      <div>
+        <%= f.label :username, "Nome de usuário", class: label_class %>
+        <div class="mt-2">
+          <%= f.text_field :username, autofocus: true, autocomplete: "username", required: true, placeholder: "Seu nome", class: input_class %>
+        </div>
       </div>
-    </div>
 
-    <div>
-      <%= f.label :password, "Senha", class: label_class %>
-      <div class="mt-2">
-        <%= f.password_field :password, autocomplete: "new-password", required: true, class: input_class %>
+      <div>
+        <%= f.label :email, "E-mail", class: label_class %>
+        <div class="mt-2">
+          <%= f.email_field :email, autocomplete: "email", required: true, placeholder: "voce@restaurante.com", class: input_class %>
+        </div>
       </div>
-      <% if @minimum_password_length %>
-        <p class="mt-1 text-xs text-gray-500">Mínimo de <%= @minimum_password_length %> caracteres</p>
+
+      <div>
+        <%= f.label :password, "Senha", class: label_class %>
+        <div class="mt-2">
+          <%= f.password_field :password, autocomplete: "new-password", required: true, class: input_class %>
+        </div>
+        <% if @minimum_password_length %>
+          <p class="mt-1 text-xs text-gray-500">Mínimo de <%= @minimum_password_length %> caracteres</p>
+        <% end %>
+      </div>
+
+      <div>
+        <%= f.label :password_confirmation, "Confirmar senha", class: label_class %>
+        <div class="mt-2">
+          <%= f.password_field :password_confirmation, autocomplete: "new-password", required: true, class: input_class %>
+        </div>
+      </div>
+
+      <button type="button" data-action="registration-steps#next" class="w-full <%= primary_button %>">Continuar</button>
+    </section>
+
+    <section data-registration-steps-target="step" class="space-y-6" hidden>
+      <%= f.fields_for :company do |cf| %>
+        <div>
+          <%= cf.label :name, "Nome da empresa", class: label_class %>
+          <div class="mt-2">
+            <%= cf.text_field :name, required: true, autocomplete: "organization", placeholder: "Meu restaurante", class: input_class %>
+          </div>
+        </div>
+
+        <div>
+          <%= cf.label :cnpj, "CNPJ", class: label_class %>
+          <div class="mt-2">
+            <%= cf.text_field :cnpj, placeholder: "00.000.000/0000-00", class: input_class %>
+          </div>
+        </div>
+
+        <div>
+          <%= cf.label :address, "Endereço", class: label_class %>
+          <div class="mt-2">
+            <%= cf.text_field :address, autocomplete: "street-address", placeholder: "Endereço completo", class: input_class %>
+          </div>
+        </div>
       <% end %>
-    </div>
 
-    <div>
-      <%= f.label :password_confirmation, "Confirmar senha", class: label_class %>
-      <div class="mt-2">
-        <%= f.password_field :password_confirmation, autocomplete: "new-password", required: true, class: input_class %>
+      <div class="flex gap-x-3">
+        <button type="button" data-action="registration-steps#back" class="flex-1 <%= secondary_button %>">Voltar</button>
+        <%= f.submit "Criar conta", class: "flex-1 #{primary_button}", data: { action: "registration-steps#submit" } %>
       </div>
-    </div>
-
-    <%= f.submit "Criar conta", class: "w-full rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" %>
+    </section>
   <% end %>
 <% end %>

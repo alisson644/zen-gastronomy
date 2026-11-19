@@ -24,6 +24,20 @@ RSpec.describe "Authorization by role", type: :request do
     post subcategories_path, params: { subcategory: { name: "Nova sub", category_id: subcategory.category_id } }, as: :turbo_stream
   end
 
+  context "as a user without a company" do
+    let(:user) { create(:user, company: nil) }
+
+    before { sign_in user }
+
+    it "is sent to the profile page instead of a create-company modal" do
+      get root_path
+      expect(response).to redirect_to(edit_user_registration_path)
+      follow_redirect!
+      expect(response).to have_http_status(:ok)
+      expect(response.body).not_to include("Para começar vamos cadastrar a sua empresa")
+    end
+  end
+
   context "when logged out" do
     it "keeps the landing page public" do
       get root_path
@@ -135,11 +149,10 @@ RSpec.describe "Authorization by role", type: :request do
       sign_in admin
     end
 
-    it "does not see the create-company modal and lands on the companies list" do
+    it "lands on the companies list" do
       get root_path
       expect(response).to redirect_to(admin_companies_path)
       follow_redirect!
-      expect(response.body).not_to include("Para começar vamos cadastrar a sua empresa")
       expect(response.body).to include("Empresa Alvo", "Outra Empresa")
     end
 

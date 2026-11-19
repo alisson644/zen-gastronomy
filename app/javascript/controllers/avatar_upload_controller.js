@@ -7,14 +7,14 @@ export default class extends Controller {
   preview(event) {
     const file = event.target.files[0]
     if (!file) {
-      this.saveTarget.hidden = true
+      if (this.hasSaveTarget) this.saveTarget.hidden = true
       return
     }
 
     if (this.objectUrl) URL.revokeObjectURL(this.objectUrl)
     this.objectUrl = URL.createObjectURL(file)
     this.previewTarget.src = this.objectUrl
-    this.saveTarget.hidden = false
+    if (this.hasSaveTarget) this.saveTarget.hidden = false
   }
 
   disconnect() {

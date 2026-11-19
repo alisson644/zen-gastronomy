@@ -26,7 +26,7 @@ class ApplicationController < ActionController::Base
   protected
 
   def configure_permitted_parameters
-    devise_parameter_sanitizer.permit(:sign_up, keys: [ :username ])
+    devise_parameter_sanitizer.permit(:sign_up, keys: [ :username, :avatar, { company_attributes: [ :name, :cnpj, :address ] } ])
     devise_parameter_sanitizer.permit(:account_update, keys: [ :username, :avatar, :remove_avatar ])
   end
 
@@ -38,8 +38,6 @@ class ApplicationController < ActionController::Base
   def home_path_for(user)
     if user.system_admin? && current_company.blank?
       admin_companies_path
-    elsif user.company.blank?
-      root_path # sem empresa ainda: o layout mostra o modal de cadastro
     elsif user.can?("dashboard.view")
       root_path
     elsif user.can?("financial.view")
