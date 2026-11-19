@@ -67,6 +67,14 @@ RSpec.describe "Movements", type: :request do
     expect(response).to have_http_status(:unprocessable_content)
   end
 
+  it "rejects a transfer to an account from another company" do
+    other = create(:company, name: "Outra").accounts.first
+    expect { create_movement(mv_type: "transfer", amount: "40", related_account_id: other.id) }.not_to change(Movement, :count)
+    expect(response).to have_http_status(:unprocessable_content)
+    expect(other.reload.current_balance).to eq(0)
+    expect(bank.reload.current_balance).to eq(100)
+  end
+
   it "rejects invalid amount" do
     create_movement(amount: "0")
     expect(response).to have_http_status(:unprocessable_content)
