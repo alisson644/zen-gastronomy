@@ -19,6 +19,9 @@ application.register("modal-form", ModalFormController)
 import MoneyChartController from "./money_chart_controller"
 application.register("money-chart", MoneyChartController)
 
+import NestedFieldsController from "./nested_fields_controller"
+application.register("nested-fields", NestedFieldsController)
+
 import PricingToggleController from "./pricing_toggle_controller"
 application.register("pricing-toggle", PricingToggleController)
 
@@ -27,6 +30,9 @@ application.register("registration-steps", RegistrationStepsController)
 
 import SidebarController from "./sidebar_controller"
 application.register("sidebar", SidebarController)
+
+import StockEntryController from "./stock_entry_controller"
+application.register("stock-entry", StockEntryController)
 
 import TransactionTypeController from "./transaction_type_controller"
 application.register("transaction-type", TransactionTypeController)

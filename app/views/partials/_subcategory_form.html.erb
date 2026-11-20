@@ -4,6 +4,7 @@
   <%= form_with model: subcategory, data: { controller: "modal-form", action: "turbo:submit-end->modal-form#close" } do |form| %>
     <h2 class="text-base/7 font-semibold text-gray-900">NOVA SUBCATEGORIA</h2>
     <%= render "partials/form_errors", record: subcategory %>
+    <%= hidden_field_tag :expense_only, "1", id: nil if local_assigns[:expense_only] %>
 
     <div class="grid gap-y-6 mt-3 text-left">
       <div>

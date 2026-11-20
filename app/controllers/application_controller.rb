@@ -5,7 +5,7 @@ class ApplicationController < ActionController::Base
   before_action :authenticate_user!, unless: :devise_controller?
   before_action :configure_permitted_parameters, if: :devise_controller?
 
-  helper_method :current_company, :viewing_company?
+  helper_method :current_company, :viewing_company?, :stock_home_path
 
   # Empresa em uso: a do usuário ou, para o admin do sistema, a que ele escolheu visualizar.
   def current_company
@@ -17,6 +17,18 @@ class ApplicationController < ActionController::Base
       else
         current_user&.company
       end
+  end
+
+  # Primeira tela do estoque que o usuário pode abrir (nil se nenhuma).
+  def stock_home_path(user = current_user)
+    return unless user
+
+    if user.can?("stock.view") then stock_path
+    elsif user.can?("stock.entries") then stock_entries_path
+    elsif user.can?("stock.count") then stock_counts_path
+    elsif user.can?("products.manage") then products_path
+    elsif user.can?("suppliers.manage") then suppliers_path
+    end
   end
 
   def viewing_company?
@@ -42,6 +54,8 @@ class ApplicationController < ActionController::Base
       root_path
     elsif user.can?("financial.view")
       financial_index_path
+    elsif stock_home_path(user)
+      stock_home_path(user)
     else
       edit_user_registration_path
     end

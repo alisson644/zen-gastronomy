@@ -183,4 +183,59 @@ RSpec.describe "Authorization by role", type: :request do
       expect { post_movement }.to change { company.movements.count }.by(1)
     end
   end
+
+  describe "stock permissions" do
+    def stock_pages
+      { stock_path => "stock.view", products_path => "products.manage", suppliers_path => "suppliers.manage",
+        stock_entries_path => "stock.entries", new_stock_output_path => "stock.entries", stock_counts_path => "stock.count" }
+    end
+
+    context "as administrativo" do
+      let(:user) { create(:user, :administrativo, company: company) }
+
+      before { sign_in user }
+
+      it "cannot open any stock page nor see Estoque in the sidebar" do
+        stock_pages.each_key do |path|
+          get path
+          expect(response).to redirect_to(financial_index_path), "expected #{path} to be denied"
+        end
+        get financial_index_path
+        expect(response.body).not_to include(%(title="Estoque"))
+      end
+
+      it "is forbidden to write stock data" do
+        post suppliers_path, params: { supplier: { name: "X" } }
+        expect(response).to have_http_status(:forbidden)
+        post products_path, params: { product: { name: "X", unit: "un" } }
+        expect(response).to have_http_status(:forbidden)
+        post stock_counts_path
+        expect(response).to have_http_status(:forbidden)
+        expect(Supplier.count + Product.count + StockCount.count).to eq(0)
+      end
+    end
+
+    context "with a custom role that can only count stock" do
+      let(:role) { create(:role, company: company, permissions: %w[stock.count]) }
+      let(:user) { create(:user, company: company, role: role) }
+
+      before { sign_in user }
+
+      it "opens the stock count but not the other stock pages" do
+        get stock_counts_path
+        expect(response).to have_http_status(:ok)
+        expect { post stock_counts_path }.to change(StockCount, :count).by(1)
+
+        [ products_path, suppliers_path, stock_entries_path, new_stock_output_path ].each do |path|
+          get path
+          expect(response).to have_http_status(:redirect), "expected #{path} to be denied"
+        end
+      end
+
+      it "sees Estoque in the sidebar pointing to the count" do
+        get stock_counts_path
+        expect(response.body).to include(%(title="Estoque"))
+      end
+    end
+  end
 end

@@ -1,0 +1,6 @@
+<% content_for :title, "Editar produto · Zen Gastronomy" %>
+<%= render "partials/page_header", title: "Editar produto", subtitle: @product.name %>
+<div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+  <%= render "form", product: @product %>
+</div>
+<%= render "partials/expense_category_modals" %>

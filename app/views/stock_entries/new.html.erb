@@ -1,0 +1,6 @@
+<% content_for :title, "Nova entrada · Zen Gastronomy" %>
+<%= render "partials/page_header", title: "Nova entrada de estoque", subtitle: "Os produtos entram no estoque e o valor é lançado no financeiro" %>
+<div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+  <%= render "form", entry: @entry %>
+</div>
+<%= render "partials/expense_category_modals" %>

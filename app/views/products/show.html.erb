@@ -1,0 +1,48 @@
+<% content_for :title, "#{@product.name} · Zen Gastronomy" %>
+
+<%= render layout: "partials/page_header", locals: { title: @product.name, subtitle: [@product.code, @product.unit_label, @product.subcategory&.name].compact_blank.join(" · ") } do %>
+  <div class="flex gap-3">
+    <%= button_to "Excluir", product_path(@product), method: :delete, form_class: "contents",
+          data: { turbo_confirm: "Excluir o produto #{@product.name}?" }, class: "rounded-md px-3 py-2 text-sm font-semibold text-red-600 hover:bg-red-50" %>
+    <%= link_to "Editar", edit_product_path(@product), class: stock_secondary_button %>
+  </div>
+<% end %>
+<%= render "partials/stock_tabs" %>
+
+<div class="mx-auto max-w-7xl space-y-6 px-4 py-6 sm:px-6 lg:px-8">
+  <dl class="grid grid-cols-2 gap-4 lg:grid-cols-4">
+    <% [["Em estoque", "#{qty(@product.quantity)} #{@product.unit}"], ["Estoque mínimo", qty(@product.min_quantity)],
+        ["Custo médio", brl(@product.average_cost)], ["Preço de venda", @product.sale_price ? brl(@product.sale_price) : "—"]].each do |label, value| %>
+      <div class="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+        <dt class="text-sm text-slate-500"><%= label %></dt>
+        <dd class="mt-1 text-xl font-semibold text-slate-900"><%= value %></dd>
+      </div>
+    <% end %>
+  </dl>
+
+  <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+    <section class="rounded-lg border border-slate-200 bg-white shadow-sm">
+      <h2 class="border-b border-slate-200 px-4 py-3 text-base font-semibold text-slate-800">Fornecedores</h2>
+      <% if @product_suppliers.any? %>
+        <ul class="divide-y divide-slate-100">
+          <% @product_suppliers.each do |link| %>
+            <li class="flex items-center justify-between gap-4 px-4 py-3 text-sm">
+              <span class="text-slate-800">
+                <%= link.supplier.name %>
+                <% if link.supplier_code.present? %><span class="text-xs text-slate-500">(cód. <%= link.supplier_code %>)</span><% end %>
+              </span>
+              <span class="text-slate-600"><%= link.last_price ? brl(link.last_price) : "—" %></span>
+            </li>
+          <% end %>
+        </ul>
+      <% else %>
+        <p class="p-6 text-center text-sm text-slate-500">Nenhum fornecedor vinculado.</p>
+      <% end %>
+    </section>
+
+    <section class="rounded-lg border border-slate-200 bg-white shadow-sm">
+      <h2 class="border-b border-slate-200 px-4 py-3 text-base font-semibold text-slate-800">Histórico de estoque</h2>
+      <%= render "stock/movements", stock_movements: @stock_movements, show_product: false %>
+    </section>
+  </div>
+</div>

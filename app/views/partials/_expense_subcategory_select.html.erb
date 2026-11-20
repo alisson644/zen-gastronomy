@@ -1,0 +1,10 @@
+<%# Select de subcategorias de despesa dos formulários de estoque. Tem id próprio para ser
+    trocado via Turbo Stream quando uma categoria/subcategoria é criada pelo modal.
+    locals: field (:product ou :stock_entry), selected %>
+<% entry = field.to_s == "stock_entry" %>
+<div id="<%= field %>_subcategory_select">
+  <%= select_tag "#{field}[subcategory_id]", expense_subcategory_options(current_company, selected),
+        id: "#{field}_subcategory_id", class: stock_input_class,
+        include_blank: (entry ? nil : "Nenhuma"), prompt: (entry ? "Selecione a categoria" : nil), required: entry,
+        data: (entry ? { stock_entry_target: "subcategory" } : {}) %>
+</div>

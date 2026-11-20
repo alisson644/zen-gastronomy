@@ -25,7 +25,19 @@ Rails.application.routes.draw do
   end
   resource :avatar, only: [ :update ]
   resources :accounts
-  resources :movements
+  resources :movements do
+    patch :pay, on: :member
+  end
   resources :categories, only: [ :create ]
   resources :subcategories, only: [ :create ]
+
+  # Estoque
+  resource :stock, only: :show, controller: "stock"
+  resources :products
+  resources :suppliers
+  resources :stock_entries, only: [ :index, :new, :create, :show ]
+  resources :stock_outputs, only: [ :new, :create ]
+  resources :stock_counts, only: [ :index, :create, :show, :update ] do
+    patch :finalize, on: :member
+  end
 end

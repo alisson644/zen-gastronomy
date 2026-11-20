@@ -43,6 +43,10 @@ RSpec.describe Role, type: :model do
       expect(build(:role, company: company, permissions: [ "", "financial.view" ]).permissions).to eq(%w[financial.view])
     end
 
+    it "lets companies grant the stock permissions" do
+      expect(Permission::COMPANY).to include("stock.view", "stock.entries", "stock.count", "products.manage", "suppliers.manage")
+    end
+
     it "gives the Dono every company permission, even ones added to the catalog later" do
       dono = company.roles.find_by!(key: "dono")
       dono.update_column(:permissions, [])

@@ -54,7 +54,7 @@ class DashboardSummary
   # => [{ month: Date, label: "nov/26", income: BigDecimal, expense: BigDecimal }, ...]
   def monthly_series(months: 6)
     first = month.advance(months: -(months - 1))
-    rows = company.movements
+    rows = company.movements.pago
                   .where(mv_type: %w[entrada saida], occurred_at: first.beginning_of_day..month.end_of_month.end_of_day)
                   .pluck(:occurred_at, :mv_type, :amount)
 
@@ -71,7 +71,7 @@ class DashboardSummary
   private
 
   def movements_in(date)
-    company.movements.where(occurred_at: date.beginning_of_month.beginning_of_day..date.end_of_month.end_of_day)
+    company.movements.pago.where(occurred_at: date.beginning_of_month.beginning_of_day..date.end_of_month.end_of_day)
   end
 
   # Ordena do maior para o menor e agrupa a cauda em "Outros"

@@ -1,0 +1,25 @@
+<%# Uma linha de produto na entrada. locals: f (fields_for :items), products %>
+<div class="grid grid-cols-2 gap-3 rounded-md border border-slate-200 p-3 sm:grid-cols-12 sm:items-end sm:border-0 sm:p-0" data-nested-fields-target="row" data-stock-entry-target="item">
+  <div class="col-span-2 sm:col-span-5">
+    <%= f.label :product_id, "Produto", class: "text-xs font-medium text-gray-600 sm:sr-only" %>
+    <%= f.select :product_id,
+          options_for_select(products.map { |p| [ "#{p.name} (#{p.unit})", p.id, { data: { cost: decimal_field_value(p.average_cost), subcategory: p.subcategory_id } } ] }, f.object.product_id),
+          { prompt: "Selecione o produto" }, class: stock_input_class, data: { action: "change->stock-entry#productChanged" } %>
+  </div>
+  <div class="sm:col-span-2">
+    <%= f.label :quantity, "Quantidade", class: "text-xs font-medium text-gray-600 sm:sr-only" %>
+    <%= f.text_field :quantity, value: decimal_field_value(f.object.quantity, precision: 3), placeholder: "Qtd.", inputmode: "decimal", autocomplete: "off",
+          class: stock_input_class, data: { stock_entry_target: "quantity", action: "input->stock-entry#recalculate" } %>
+  </div>
+  <div class="sm:col-span-2">
+    <%= f.label :unit_cost, "Custo unitário", class: "text-xs font-medium text-gray-600 sm:sr-only" %>
+    <%= f.text_field :unit_cost, value: decimal_field_value(f.object.unit_cost), placeholder: "Custo unit. (R$)", inputmode: "decimal", autocomplete: "off",
+          class: stock_input_class,
+          data: { controller: "currency-input", stock_entry_target: "unitCost",
+                  action: "input->currency-input#input blur->currency-input#blur input->stock-entry#recalculate" } %>
+  </div>
+  <div class="text-sm text-slate-700 sm:col-span-2 sm:pb-2 sm:text-right" data-stock-entry-target="itemTotal"></div>
+  <div class="text-right sm:col-span-1 sm:pb-2">
+    <button type="button" data-action="nested-fields#remove stock-entry#recalculate" class="text-sm font-semibold text-red-600 hover:text-red-500">Remover</button>
+  </div>
+</div>

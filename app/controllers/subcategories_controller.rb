@@ -6,7 +6,7 @@ class SubcategoriesController < ApplicationController
   def create
     @subcategory = @company.subcategories.new(subcategory_params)
     # Only accept categories that belong to the current company
-    @subcategory.category = @company.categories.find_by(id: subcategory_params[:category_id])
+    @subcategory.category = categories.find_by(id: subcategory_params[:category_id])
 
     if @subcategory.save
       respond_to do |format|
@@ -15,7 +15,7 @@ class SubcategoriesController < ApplicationController
       end
     else
       render turbo_stream: turbo_stream.replace("subcategory_form", partial: "partials/subcategory_form",
-                                                locals: { subcategory: @subcategory, categories: @company.categories.order(:id) }),
+                                                locals: { subcategory: @subcategory, categories: categories.order(:id), expense_only: expense_only? }),
              status: :unprocessable_content
     end
   end
@@ -24,6 +24,14 @@ class SubcategoriesController < ApplicationController
 
   def set_company
     @company = current_company
+  end
+
+  # Vindo das telas de estoque (produto / entrada): só categorias de despesa.
+  def expense_only? = params[:expense_only].present?
+  helper_method :expense_only?
+
+  def categories
+    expense_only? ? @company.categories.where(is_income: false) : @company.categories
   end
 
   def subcategory_params

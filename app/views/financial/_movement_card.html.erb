@@ -10,6 +10,7 @@
     <p class="text-xs text-slate-500">
       <%= type_labels[movement.mv_type] %> · <%= movement.occurred_at.strftime("%d/%m/%Y") %>
     </p>
+    <%= render "financial/pending_badge", movement: movement %>
     <% if movement.description.present? %>
       <p class="mt-1 line-clamp-2 text-xs text-slate-500"><%= movement.description %></p>
     <% end %>
