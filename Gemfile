@@ -45,6 +45,10 @@ gem "thruster", require: false
 # devise gem
 gem "devise"
 
+# Segurança: CORS (origens liberadas por ENV) e limite de requisições / bloqueio de abuso
+gem "rack-cors"
+gem "rack-attack"
+
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
@@ -52,6 +56,9 @@ group :development, :test do
 
   # Static analysis for security vulnerabilities [https://brakemanscanner.org/]
   gem "brakeman", require: false
+
+  # Audits gems for known vulnerabilities
+  gem "bundler-audit", require: false
 
   # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
   gem "rubocop-rails-omakase", require: false

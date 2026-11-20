@@ -28,14 +28,17 @@ module ZenGastronomy
     # Common ones are `templates`, `generators`, or `middleware`, for example.
     config.autoload_lib(ignore: %w[assets tasks])
 
-    # Source - https://stackoverflow.com/a
-    # Posted by Qasim Ali, modified by community. See post 'Timeline' for change history
-    # Retrieved 2025-11-27, License - CC BY-SA 4.0
+    # As chaves do Active Record Encryption (encrypts :cnpj) são lidas automaticamente de
+    # credentials.active_record_encryption. Não as leia aqui: sem master key (build do Docker,
+    # CI) isso quebra o boot.
 
-    config.active_record.encryption.primary_key = Rails.application.credentials[:active_record_encryption][:primary_key]
-    config.active_record.encryption.deterministic_key = Rails.application.credentials[:active_record_encryption][:deterministic_key]
-    config.active_record.encryption.key_derivation_salt = Rails.application.credentials[:active_record_encryption][:key_derivation_salt]
+    # Fuso do Brasil: datas de movimentações, entradas e CMV.
+    config.time_zone = "Brasilia"
 
+    # Permissions-Policy (o DSL config.permissions_policy do Rails ainda emite o cabeçalho
+    # legado Feature-Policy, que os navegadores atuais ignoram).
+    config.action_dispatch.default_headers["Permissions-Policy"] =
+      "camera=(), microphone=(), geolocation=(), usb=(), payment=(), fullscreen=(self)"
 
     # Configuration for the application, engines, and railties goes here.
     #
