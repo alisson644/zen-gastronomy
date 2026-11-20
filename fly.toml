@@ -1,10 +1,10 @@
-# fly.toml app configuration file generated for zen-gastronomy on 2026-11-20T05:15:19Z
+# fly.toml app configuration file generated for zen-gastronomy on 2026-11-20T05:20:55Z
 #
 # See https://docs.fly.io/reference/configuration for information about how to use this file.
 #
 
 app = 'zen-gastronomy'
-primary_region = 'ams'
+primary_region = 'gru'
 console_command = '/rails/bin/rails console'
 
 [build]
@@ -20,4 +20,4 @@ console_command = '/rails/bin/rails console'
   memory = '1gb'
   cpu_kind = 'shared'
   cpus = 1
-  memory_mb = 256
+  memory_mb = 1024
