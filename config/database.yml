@@ -78,7 +78,16 @@ test:
 # Read https://guides.rubyonrails.org/configuring.html#configuring-a-database
 # for a full overview on how database connection configuration can be specified.
 #
+# Dois modos:
+# - DATABASE_URL definido (ex.: Fly.io): um banco só; Solid Cache/Queue/Cable usam o principal
+#   (tabelas criadas por `bin/rails db:load_solid_schemas`, chamado no bin/docker-entrypoint).
+# - Sem DATABASE_URL (Kamal): Postgres próprio, com um banco para cada um (cria via db:prepare).
 production:
+<% if ENV["DATABASE_URL"].present? %>
+  primary:
+    <<: *default
+    url: <%= ENV["DATABASE_URL"] %>
+<% else %>
   primary: &primary_production
     <<: *default
     database: zen_gastronomy_production
@@ -98,3 +107,4 @@ production:
     <<: *primary_production
     database: zen_gastronomy_production_cable
     migrations_paths: db/cable_migrate
+<% end %>

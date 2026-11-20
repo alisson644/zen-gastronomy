@@ -12,5 +12,7 @@ test:
   <<: *default
 
 production:
+  <% if ENV["DATABASE_URL"].blank? %>
   database: cache
+  <% end %>
   <<: *default

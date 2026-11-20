@@ -51,7 +51,8 @@ Rails.application.configure do
 
   # Replace the default in-process and non-durable queuing backend for Active Job.
   config.active_job.queue_adapter = :solid_queue
-  config.solid_queue.connects_to = { database: { writing: :queue } }
+  # Com DATABASE_URL (Fly.io) a fila fica no banco principal; senão, no banco "queue".
+  config.solid_queue.connects_to = { database: { writing: :queue } } if ENV["DATABASE_URL"].blank?
 
   # Domínio público do app (links dos e-mails e proteção do cabeçalho Host).
   app_host = ENV.fetch("APP_HOST", "localhost")

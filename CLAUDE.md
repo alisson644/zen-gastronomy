@@ -72,6 +72,7 @@ Note: `adjust_company_cash_if_cash_account!` checks `account_type == "cash"`, bu
 - `config/initializers/rack_attack.rb`: throttles login, password reset, sign-up and general traffic; bans scanner paths. Disabled in test except `spec/requests/rack_attack_spec.rb`.
 - `config/initializers/cors.rb`: no origin allowed unless listed in `CORS_ORIGINS`; never with credentials.
 - CSP in `config/initializers/content_security_policy.rb` (script nonce; external scripts only from cdn.jsdelivr.net, pinned versions). New inline `<script>` must use `javascript_tag nonce: true`. `Permissions-Policy` is set in `config/application.rb`.
+- Two deploy targets: Fly.io (`fly.toml`) and Kamal (`config/deploy.yml`). With `DATABASE_URL` set (Fly), production runs single-database: Solid Cache/Queue/Cable share the primary DB (`database.yml`, `cache.yml`, `cable.yml`, `production.rb` check `DATABASE_URL`), and `bin/rails db:load_solid_schemas` (run by `bin/docker-entrypoint`) creates their tables. Without it (Kamal), each has its own database.
 - Production config comes from ENV (`APP_HOST`, `DB_HOST`, `SMTP_*`, `MAILER_FROM`, `CORS_ORIGINS`); Kamal reads `.env` (see `.env.example`, `docs/DEPLOY.md`). Time zone is `Brasilia`.
 
 ### Brazilian number input

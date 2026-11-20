@@ -8,7 +8,8 @@ fi
 
 # If running the rails server then create or migrate existing database
 if [ "${@: -2:1}" == "./bin/rails" ] && [ "${@: -1:1}" == "server" ]; then
-  ./bin/rails db:prepare
+  # db:load_solid_schemas só age no modo banco único (DATABASE_URL, ex.: Fly.io)
+  ./bin/rails db:prepare db:load_solid_schemas
 fi
 
 exec "${@}"
