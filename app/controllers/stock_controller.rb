@@ -8,5 +8,6 @@ class StockController < ApplicationController
     @stock_value = @products.sum("quantity * average_cost")
     @low_stock_count = @products.count(&:low_stock?)
     @stock_movements = current_company.stock_movements.recent.includes(:product, :creator).limit(15)
+    @cmv_periods = StockCmv.periods(current_company)
   end
 end

@@ -11,6 +11,35 @@
 <%= render "partials/stock_tabs" %>
 
 <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+  <% if @count.finalizada? && @count.closing_value %>
+    <% period = StockCmv.for_count(@count) %>
+    <dl class="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
+      <div class="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+        <dt class="text-sm text-slate-500">Estoque final</dt>
+        <dd class="mt-1 text-xl font-semibold text-slate-900"><%= brl(@count.closing_value) %></dd>
+      </div>
+      <% if period %>
+        <div class="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+          <dt class="text-sm text-slate-500">CMV do período</dt>
+          <dd class="mt-1 text-xl font-semibold text-slate-900"><%= brl(period.cmv) %></dd>
+          <dd class="mt-1 text-xs text-slate-500">
+            <%= period.start_date.strftime("%d/%m/%Y") %> a <%= period.end_date.strftime("%d/%m/%Y") %> ·
+            inicial <%= brl(period.opening_value) %> + compras <%= brl(period.purchases) %> − final <%= brl(period.closing_value) %>
+          </dd>
+        </div>
+        <div class="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+          <dt class="text-sm text-slate-500">CMV / faturamento</dt>
+          <dd class="mt-1 text-xl font-semibold text-slate-900"><%= period.cmv_percent ? cmv_percent(period.cmv_percent) : "—" %></dd>
+          <dd class="mt-1 text-xs text-slate-500">Faturamento de <%= brl(period.revenue) %></dd>
+        </div>
+      <% else %>
+        <div class="rounded-lg border border-dashed border-slate-300 bg-white p-4 text-sm text-slate-500 sm:col-span-2">
+          Primeira conferência: este valor é o estoque inicial do próximo período de CMV.
+        </div>
+      <% end %>
+    </dl>
+  <% end %>
+
   <%= form_with model: @count, class: "space-y-4" do |f| %>
     <%= render "partials/form_errors", record: @count %>
 
