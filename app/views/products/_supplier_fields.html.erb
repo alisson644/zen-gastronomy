@@ -1,0 +1,20 @@
+<%# Uma linha de fornecedor do produto. locals: f (fields_for :product_suppliers), suppliers %>
+<div class="grid grid-cols-1 gap-3 rounded-md border border-slate-200 p-3 sm:grid-cols-12 sm:items-end sm:border-0 sm:p-0" data-nested-fields-target="row">
+  <div class="sm:col-span-5">
+    <%= f.label :supplier_id, "Fornecedor", class: "text-xs font-medium text-gray-600 sm:sr-only" %>
+    <%= f.collection_select :supplier_id, suppliers, :id, :name, { prompt: "Selecione o fornecedor" }, class: stock_input_class %>
+  </div>
+  <div class="sm:col-span-3">
+    <%= f.label :supplier_code, "Código no fornecedor", class: "text-xs font-medium text-gray-600 sm:sr-only" %>
+    <%= f.text_field :supplier_code, placeholder: "Código no fornecedor", class: stock_input_class %>
+  </div>
+  <div class="sm:col-span-3">
+    <%= f.label :last_price, "Último preço", class: "text-xs font-medium text-gray-600 sm:sr-only" %>
+    <%= f.text_field :last_price, value: decimal_field_value(f.object.last_price), placeholder: "Último preço (R$)", inputmode: "decimal",
+          autocomplete: "off", data: { controller: "currency-input", action: "input->currency-input#input blur->currency-input#blur" }, class: stock_input_class %>
+  </div>
+  <div class="sm:col-span-1 sm:text-right">
+    <%= f.hidden_field :_destroy, data: { nested_fields_target: "destroy" } %>
+    <button type="button" data-action="nested-fields#remove" class="text-sm font-semibold text-red-600 hover:text-red-500">Remover</button>
+  </div>
+</div>

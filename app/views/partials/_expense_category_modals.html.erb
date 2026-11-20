@@ -1,0 +1,7 @@
+<%# Modais de nova categoria/subcategoria (só despesa) das telas de estoque.
+    Ficam fora do formulário principal: formulários não podem ser aninhados. %>
+<% if current_user.can?("categories.manage") %>
+  <%= render "partials/modal_create_category", category: Category.new, expense_only: true %>
+  <%= render "partials/modal_create_subcategory", subcategory: Subcategory.new,
+        categories: current_company.categories.where(is_income: false).order(:id), expense_only: true %>
+<% end %>

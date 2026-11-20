@@ -1,0 +1,37 @@
+<% content_for :title, "Conferências · Zen Gastronomy" %>
+
+<%= render layout: "partials/page_header", locals: { title: "Conferências de estoque", subtitle: "Contagem física e ajuste do estoque" } do %>
+  <% if @open_count %>
+    <%= link_to "Continuar conferência aberta", stock_count_path(@open_count), class: stock_primary_button %>
+  <% else %>
+    <%= button_to "Nova conferência", stock_counts_path, class: stock_primary_button,
+          data: { turbo_confirm: "Iniciar uma conferência com as quantidades atuais do estoque?" } %>
+  <% end %>
+<% end %>
+<%= render "partials/stock_tabs" %>
+
+<div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+  <% if @counts.any? %>
+    <div class="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
+      <ul role="list" class="divide-y divide-slate-100">
+        <% @counts.each do |count| %>
+          <li id="<%= dom_id(count) %>">
+            <%= link_to stock_count_path(count), class: "flex items-center justify-between gap-4 px-4 py-4 hover:bg-slate-50 sm:px-6" do %>
+              <div class="min-w-0">
+                <p class="text-sm font-semibold text-gray-900">Conferência de <%= count.created_at.strftime("%d/%m/%Y %H:%M") %></p>
+                <p class="mt-1 text-sm text-gray-500"><%= count.creator&.username %><% if count.notes.present? %> · <%= count.notes %><% end %></p>
+              </div>
+              <% if count.aberta? %>
+                <span class="rounded bg-amber-50 px-1.5 py-0.5 text-xs font-medium text-amber-700 ring-1 ring-amber-600/20 ring-inset">Aberta</span>
+              <% else %>
+                <span class="rounded bg-green-50 px-1.5 py-0.5 text-xs font-medium text-green-700 ring-1 ring-green-600/20 ring-inset">Finalizada em <%= count.finished_at.strftime("%d/%m/%Y") %></span>
+              <% end %>
+            <% end %>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+  <% else %>
+    <%= render "partials/empty_state", message: "Nenhuma conferência realizada." %>
+  <% end %>
+</div>

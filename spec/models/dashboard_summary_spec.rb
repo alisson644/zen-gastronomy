@@ -69,4 +69,12 @@ RSpec.describe DashboardSummary do
     expect(described_class.parse_month("2026-03")).to eq(Date.new(2026, 3, 1))
     expect(described_class.parse_month("lixo")).to eq(Date.current)
   end
+
+  it "ignores pending movements (unpaid boletos)" do
+    company.movements.create!(mv_type: :saida, amount: 700, occurred_at: Date.new(2026, 11, 20), account: account,
+                              subcategory: expense_sub, category: expense_sub.category, creator: user, status: :pendente)
+    expect(summary.expense_total).to eq(500)
+    expect(summary.monthly_series(months: 1).last).to include(expense: 500)
+    expect(summary.expenses_by_category.to_h.values.sum).to eq(500)
+  end
 end

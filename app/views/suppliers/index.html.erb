@@ -1,0 +1,37 @@
+<% content_for :title, "Fornecedores · Zen Gastronomy" %>
+
+<%= render layout: "partials/page_header", locals: { title: "Fornecedores", subtitle: "Quem fornece para #{current_company.name}" } do %>
+  <%= link_to "Novo fornecedor", new_supplier_path, class: stock_primary_button %>
+<% end %>
+<%= render "partials/stock_tabs" %>
+
+<div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+  <% if @suppliers.any? %>
+    <div class="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
+      <ul role="list" class="divide-y divide-slate-100">
+        <% @suppliers.each do |supplier| %>
+          <li id="<%= dom_id(supplier) %>" class="flex flex-col gap-3 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+            <div class="min-w-0">
+              <p class="text-sm font-semibold text-gray-900">
+                <%= link_to supplier.name, supplier_path(supplier), class: "hover:text-indigo-600" %>
+                <% unless supplier.active? %><span class="ml-1 rounded bg-gray-100 px-1.5 py-0.5 text-xs font-medium text-gray-600">inativo</span><% end %>
+              </p>
+              <p class="mt-1 truncate text-sm text-gray-500">
+                <%= [supplier.contact_name, supplier.phone, supplier.email].compact_blank.join(" · ").presence || "Sem contato" %>
+              </p>
+              <p class="mt-1 text-xs text-gray-500"><%= pluralize(supplier.products_count, "produto", plural: "produtos") %></p>
+            </div>
+            <div class="flex shrink-0 items-center gap-x-4">
+              <%= link_to "Editar", edit_supplier_path(supplier), class: "text-sm font-semibold text-indigo-600 hover:text-indigo-500" %>
+              <%= button_to "Excluir", supplier_path(supplier), method: :delete,
+                    data: { turbo_confirm: "Excluir o fornecedor #{supplier.name}?" },
+                    class: "text-sm font-semibold text-red-600 hover:text-red-500" %>
+            </div>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+  <% else %>
+    <%= render "partials/empty_state", message: "Nenhum fornecedor cadastrado." %>
+  <% end %>
+</div>

@@ -1,0 +1,38 @@
+<% content_for :title, "Entradas de estoque · Zen Gastronomy" %>
+
+<%= render layout: "partials/page_header", locals: { title: "Entradas de estoque", subtitle: "Compras recebidas dos fornecedores" } do %>
+  <div class="grid grid-cols-2 gap-3 sm:flex">
+    <%= link_to "Saída", new_stock_output_path, class: stock_secondary_button %>
+    <%= link_to "Nova entrada", new_stock_entry_path, class: stock_primary_button %>
+  </div>
+<% end %>
+<%= render "partials/stock_tabs" %>
+
+<div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+  <% if @entries.any? %>
+    <div class="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
+      <ul role="list" class="divide-y divide-slate-100">
+        <% @entries.each do |entry| %>
+          <li id="<%= dom_id(entry) %>">
+            <%= link_to stock_entry_path(entry), class: "flex flex-col gap-2 px-4 py-4 hover:bg-slate-50 sm:flex-row sm:items-center sm:justify-between sm:px-6" do %>
+              <div class="min-w-0">
+                <p class="text-sm font-semibold text-gray-900"><%= entry.supplier.name %></p>
+                <p class="mt-1 text-sm text-gray-500">
+                  <%= entry.received_on.strftime("%d/%m/%Y") %>
+                  <% if entry.invoice_number.present? %> · NF <%= entry.invoice_number %><% end %>
+                  · <%= entry.payment_method_label %>
+                </p>
+              </div>
+              <div class="flex shrink-0 items-center gap-x-3">
+                <%= render "stock_entries/payment_badge", entry: entry %>
+                <span class="text-sm font-semibold text-slate-800"><%= brl(entry.total) %></span>
+              </div>
+            <% end %>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+  <% else %>
+    <%= render "partials/empty_state", message: "Nenhuma entrada registrada." %>
+  <% end %>
+</div>

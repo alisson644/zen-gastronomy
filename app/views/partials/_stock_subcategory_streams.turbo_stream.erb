@@ -1,0 +1,4 @@
+<%# Atualiza o select de categoria do formulário de produto e do de entrada de estoque
+    (só um deles existe na página; o stream para o outro é ignorado). locals: selected %>
+<%= turbo_stream.replace "product_subcategory_select", partial: "partials/expense_subcategory_select", locals: { field: :product, selected: selected } %>
+<%= turbo_stream.replace "stock_entry_subcategory_select", partial: "partials/expense_subcategory_select", locals: { field: :stock_entry, selected: selected } %>

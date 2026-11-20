@@ -1,6 +1,12 @@
 class Company < ApplicationRecord
   has_many :users, dependent: :destroy
   has_many :roles, dependent: :destroy
+  # Estoque antes de contas/produtos: entradas apontam para contas, e o histórico precisa sair antes dos produtos.
+  has_many :stock_movements, dependent: :delete_all
+  has_many :stock_counts, dependent: :destroy
+  has_many :stock_entries, dependent: :destroy
+  has_many :products, dependent: :destroy
+  has_many :suppliers, dependent: :destroy
   has_many :accounts, dependent: :destroy
   has_many :categories, dependent: :destroy
   has_many :subcategories, dependent: :destroy

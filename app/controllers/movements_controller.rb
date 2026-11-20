@@ -26,6 +26,17 @@ class MovementsController < ApplicationController
     end
   end
 
+  # Marca uma conta a pagar (ex.: boleto de entrada de estoque) como paga.
+  def pay
+    @movement = @company.movements.find(params[:id])
+    @movement.pay!
+
+    respond_to do |format|
+      format.turbo_stream { render :create }
+      format.html { redirect_to financial_index_path, notice: "Pagamento registrado." }
+    end
+  end
+
   private
 
   def set_company

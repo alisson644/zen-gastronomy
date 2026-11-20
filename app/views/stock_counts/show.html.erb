@@ -1,0 +1,65 @@
+<% content_for :title, "Conferência · Zen Gastronomy" %>
+<% editable = @count.aberta? %>
+
+<%= render layout: "partials/page_header", locals: { title: "Conferência de #{@count.created_at.strftime("%d/%m/%Y")}",
+      subtitle: editable ? "Informe a quantidade contada de cada produto. Itens em branco não são ajustados." : "Finalizada em #{@count.finished_at.strftime("%d/%m/%Y %H:%M")}#{" por #{@count.finisher.username}" if @count.finisher}" } do %>
+  <% if editable %>
+    <%= button_to "Finalizar e ajustar estoque", finalize_stock_count_path(@count), method: :patch, class: stock_primary_button,
+          data: { turbo_confirm: "Finalizar a conferência? O estoque dos itens contados será ajustado e a conferência não poderá mais ser editada." } %>
+  <% end %>
+<% end %>
+<%= render "partials/stock_tabs" %>
+
+<div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+  <%= form_with model: @count, class: "space-y-4" do |f| %>
+    <%= render "partials/form_errors", record: @count %>
+
+    <div class="overflow-x-auto rounded-lg border border-slate-200 bg-white shadow-sm">
+      <table class="w-full table-auto text-left text-sm">
+        <thead class="bg-slate-50 text-slate-500">
+          <tr>
+            <th class="px-4 py-3 font-normal">Produto</th>
+            <th class="px-4 py-3 text-right font-normal">No sistema</th>
+            <th class="px-4 py-3 text-right font-normal">Contado</th>
+            <th class="px-4 py-3 text-right font-normal">Diferença</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100">
+          <%= f.fields_for :items, @items, include_id: false do |item_f| %>
+            <% item = item_f.object %>
+            <% diff = item.preview_difference %>
+            <tr id="<%= dom_id(item) %>">
+              <td class="px-4 py-3 text-slate-800"><%= item_f.hidden_field :id if editable %><%= item.product.name %></td>
+              <td class="px-4 py-3 text-right whitespace-nowrap text-slate-600"><%= qty(item.expected_quantity) %> <%= item.product.unit %></td>
+              <td class="px-4 py-2 text-right">
+                <% if editable %>
+                  <%= item_f.text_field :counted_quantity, value: decimal_field_value(item.counted_quantity, precision: 3), inputmode: "decimal", autocomplete: "off",
+                        "aria-label": "Quantidade contada de #{item.product.name}", class: "#{stock_input_class} ml-auto max-w-32 text-right" %>
+                <% else %>
+                  <span class="text-slate-800"><%= qty(item.counted_quantity) %></span>
+                <% end %>
+              </td>
+              <td class="px-4 py-3 text-right whitespace-nowrap font-medium <%= diff.nil? || diff.zero? ? 'text-slate-500' : diff.negative? ? 'text-red-600' : 'text-green-600' %>">
+                <%= diff.nil? ? "—" : "#{'+' if diff.positive?}#{qty(diff)}" %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+      <% if @items.empty? %>
+        <p class="p-6 text-center text-sm text-slate-500">Nenhum produto ativo no momento da conferência.</p>
+      <% end %>
+    </div>
+
+    <div>
+      <%= f.label :notes, "Observações", class: stock_label_class %>
+      <div class="mt-2"><%= f.textarea :notes, rows: 2, disabled: !editable, class: stock_input_class %></div>
+    </div>
+
+    <% if editable %>
+      <div class="flex justify-end">
+        <%= f.submit "Salvar contagem", class: stock_secondary_button %>
+      </div>
+    <% end %>
+  <% end %>
+</div>

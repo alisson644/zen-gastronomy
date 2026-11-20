@@ -1,0 +1,7 @@
+<%# Botões que abrem os modais de nova categoria/subcategoria (ver partials/_expense_category_modals). %>
+<% if current_user.can?("categories.manage") %>
+  <div class="flex gap-3 text-xs font-semibold text-indigo-600">
+    <button type="button" command="show-modal" commandfor="category" class="hover:text-indigo-500">+ Categoria</button>
+    <button type="button" command="show-modal" commandfor="subcategory" class="hover:text-indigo-500">+ Subcategoria</button>
+  </div>
+<% end %>

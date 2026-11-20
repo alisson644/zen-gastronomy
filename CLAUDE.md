@@ -52,9 +52,19 @@ Everything is scoped to a `Company`. A `User` `belongs_to :company` (optional in
 ### Movements and balances
 `Movement` (`mv_type` enum: `entrada` / `saida` / `transfer`) is the core ledger record. `amount` is always positive; the sign comes from `mv_type`. `Account#current_balance` is a denormalized running balance maintained by Movement callbacks (`after_create` / `after_update` / `after_destroy`) that apply/revert deltas with row locks. A transfer debits `account_id` and credits `related_account_id`. Never update `current_balance` directly when changing movements — go through the model so callbacks keep balances consistent. On account creation, `current_balance` is initialized from `initial_balance` in `AccountsController`.
 
+`Movement#status` is `pago` (default) or `pendente` (accounts payable, e.g. a boleto from a stock entry; only `saida` can be pending). Balance callbacks only apply paid movements; `Movement#pay!` (`PATCH /movements/:id/pay`) flips it and debits the account. `DashboardSummary` only counts paid movements.
+
 `category_id` on a movement is derived server-side from the chosen subcategory (`MovementsController#create`); the form only submits `subcategory_id`.
 
 Note: `adjust_company_cash_if_cash_account!` checks `account_type == "cash"`, but the enum value is `caixa` and `companies` has no `current_balance` column — this branch is effectively dead code.
+
+### Stock (estoque)
+- `Supplier`, `Product` (`has_many :suppliers, through: :product_suppliers`; nested `product_suppliers_attributes` with `last_price`), all company-scoped.
+- `Product#quantity` / `#average_cost` are denormalized and maintained only by `StockMovement` (`kind`: `entrada` / `saida` / `ajuste`, signed `quantity`, `after_create` with a row lock). Never update them directly. A product with stock history can't be destroyed — deactivate it.
+- `StockEntryRegistration` (PORO) saves a `StockEntry` + items in one transaction: one `StockMovement` per item, upserts `ProductSupplier#last_price`, and creates the expense `Movement` (paid on `received_on`, or `pendente` on `due_on` for boleto).
+- `StockCount.start!` snapshots active products; `#finalize!` creates `ajuste` movements so stock matches the counted quantities (uncounted items untouched). One open count per company.
+- Permissions: `stock.view`, `stock.entries` (entries + manual outputs), `stock.count`, `products.manage`, `suppliers.manage` (`Permission::STOCK` drives the sidebar item; `stock_home_path` picks the first page the user can open).
+- Request specs: after a 404 response, call `sign_in` again before the next request (the session cookie isn't rewritten).
 
 ### Brazilian number input
 `BrazilianDecimal` concern (`brazilian_decimal :amount`) overrides attribute setters so `"1.234,56"` parses as `1234.56`. Paired with the `currency-input` Stimulus controller on the frontend. Use it for any new money attribute.

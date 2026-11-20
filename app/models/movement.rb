@@ -11,6 +11,8 @@ class Movement < ApplicationRecord
   belongs_to :related_account, class_name: "Account", optional: true
 
   enum :mv_type, [ :entrada, :saida, :transfer ]
+  # pendente = a pagar (ex.: boleto de uma entrada de estoque); só afeta o saldo quando pago.
+  enum :status, { pendente: 0, pago: 1 }, default: :pago
 
   validates :amount, numericality: { greater_than: 0 }
   validates :occurred_at, presence: true
@@ -19,11 +21,19 @@ class Movement < ApplicationRecord
   validate :related_account_presence_for_transfer
   validate :related_account_differs_from_account
   validate :category_matches_type
+  validate :pending_only_for_expenses
 
   before_update :store_old_state
   after_create  :apply_effect!
   after_update  :apply_update_effect!
   after_destroy :revert_effect!
+
+  # Marca uma conta a pagar como paga; o saldo é debitado pelo after_update.
+  def pay!(at: Time.current)
+    return if pago?
+
+    update!(status: :pago, paid_at: at)
+  end
 
   # ---------- Balance logic ----------
   # Amount is always positive. Sign is determined by tx_type:
@@ -38,7 +48,8 @@ class Movement < ApplicationRecord
       mv_type: mv_type_was || mv_type, # mv_type_was may be nil in some rails versions
       account_id: account_id_was || account_id,
       related_account_id: related_account_id_was || related_account_id,
-      amount: amount_was || amount
+      amount: amount_was || amount,
+      status: status_was || status
     }
   end
 
@@ -63,6 +74,10 @@ class Movement < ApplicationRecord
     end
   end
 
+  def pending_only_for_expenses
+    errors.add(:status, "pendente só é permitido para saídas") if pendente? && !saida?
+  end
+
   def related_account_presence_for_transfer
     if mv_type == "transfer" && related_account_id.blank?
       errors.add(:related_account, "must be present for transfers")
@@ -76,6 +91,8 @@ class Movement < ApplicationRecord
   end
 
   def apply_effect!
+    return unless pago?
+
     self.class.transaction do
       apply_delta(mv_type, account_id, related_account_id, amount)
     end
@@ -86,12 +103,16 @@ class Movement < ApplicationRecord
     return unless @old_state
 
     self.class.transaction do
-      revert_delta(@old_state[:mv_type], @old_state[:account_id], @old_state[:related_account_id], @old_state[:amount])
-      apply_delta(mv_type, account_id, related_account_id, amount)
+      if @old_state[:status].to_s == "pago"
+        revert_delta(@old_state[:mv_type], @old_state[:account_id], @old_state[:related_account_id], @old_state[:amount])
+      end
+      apply_delta(mv_type, account_id, related_account_id, amount) if pago?
     end
   end
 
   def revert_effect!
+    return unless pago?
+
     self.class.transaction do
       revert_delta(mv_type, account_id, related_account_id, amount)
     end

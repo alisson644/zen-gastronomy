@@ -10,6 +10,11 @@ module Permission
     "categories.manage" => "Cadastrar categorias e subcategorias",
     "team.manage" => "Gerenciar equipe da empresa",
     "roles.manage" => "Gerenciar perfis da empresa",
+    "stock.view" => "Ver estoque",
+    "stock.entries" => "Registrar entradas e saídas de estoque (gera lançamento no financeiro)",
+    "stock.count" => "Fazer conferência de estoque",
+    "products.manage" => "Cadastrar produtos",
+    "suppliers.manage" => "Cadastrar fornecedores",
     "companies.view_all" => "Ver todas as empresas"
   }.freeze
 
@@ -21,4 +26,7 @@ module Permission
 
   def self.label(key) = ALL.fetch(key.to_s)
   def self.global?(key) = GLOBAL.include?(key.to_s)
+
+  # Qualquer uma destas libera o menu "Estoque".
+  STOCK = %w[stock.view products.manage suppliers.manage stock.entries stock.count].freeze
 end

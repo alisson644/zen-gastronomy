@@ -121,4 +121,46 @@ RSpec.describe "Movements", type: :request do
   def dom_id(record)
     ActionView::RecordIdentifier.dom_id(record)
   end
+
+  describe "paying a pending movement" do
+    let!(:pending) do
+      company.movements.create!(mv_type: :saida, amount: 40, occurred_at: Date.current + 5, account: bank, status: :pendente,
+                                subcategory: expense_subcategory, category: expense_subcategory.category, creator: user)
+    end
+
+    it "shows the pending badge and the pay button" do
+      get financial_index_path
+      expect(response.body).to include("Pendente", pay_movement_path(pending))
+    end
+
+    it "marks it as paid, debits the account and refreshes the page" do
+      patch pay_movement_path(pending), as: :turbo_stream
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('target="financial_summary"', 'target="movements_table"')
+      expect(pending.reload).to be_pago
+      expect(bank.reload.current_balance).to eq(60)
+    end
+
+    it "does not debit twice" do
+      patch pay_movement_path(pending), as: :turbo_stream
+      patch pay_movement_path(pending), as: :turbo_stream
+      expect(bank.reload.current_balance).to eq(60)
+    end
+
+    it "redirects on html requests" do
+      patch pay_movement_path(pending)
+      expect(response).to redirect_to(financial_index_path)
+    end
+
+    it "cannot pay another company's movement" do
+      other_user = create(:user)
+      other_account = other_user.company.accounts.first
+      sub = other_user.company.subcategories.find_by!(name: "Aluguel")
+      foreign = other_user.company.movements.create!(mv_type: :saida, amount: 1, occurred_at: Date.current, account: other_account,
+                                                     status: :pendente, subcategory: sub, category: sub.category, creator: other_user)
+      patch pay_movement_path(foreign), as: :turbo_stream
+      expect(response).to have_http_status(:not_found)
+      expect(foreign.reload).to be_pendente
+    end
+  end
 end

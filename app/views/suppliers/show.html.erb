@@ -1,0 +1,46 @@
+<% content_for :title, "#{@supplier.name} · Zen Gastronomy" %>
+
+<%= render layout: "partials/page_header", locals: { title: @supplier.name, subtitle: [@supplier.cnpj, @supplier.contact_name, @supplier.phone, @supplier.email].compact_blank.join(" · ") } do %>
+  <%= link_to "Editar", edit_supplier_path(@supplier), class: stock_secondary_button %>
+<% end %>
+<%= render "partials/stock_tabs" %>
+
+<div class="mx-auto grid max-w-7xl grid-cols-1 gap-6 px-4 py-6 sm:px-6 lg:grid-cols-2 lg:px-8">
+  <section class="rounded-lg border border-slate-200 bg-white shadow-sm">
+    <h2 class="border-b border-slate-200 px-4 py-3 text-base font-semibold text-slate-800">Produtos fornecidos</h2>
+    <% if @product_suppliers.any? %>
+      <ul class="divide-y divide-slate-100">
+        <% @product_suppliers.each do |link| %>
+          <li class="flex items-center justify-between gap-4 px-4 py-3 text-sm">
+            <span class="text-slate-800">
+              <%= link.product.name %>
+              <% if link.supplier_code.present? %><span class="text-xs text-slate-500">(cód. <%= link.supplier_code %>)</span><% end %>
+            </span>
+            <span class="text-slate-600"><%= link.last_price ? brl(link.last_price) : "—" %></span>
+          </li>
+        <% end %>
+      </ul>
+    <% else %>
+      <p class="p-6 text-center text-sm text-slate-500">Nenhum produto vinculado.</p>
+    <% end %>
+  </section>
+
+  <section class="rounded-lg border border-slate-200 bg-white shadow-sm">
+    <h2 class="border-b border-slate-200 px-4 py-3 text-base font-semibold text-slate-800">Últimas entradas</h2>
+    <% if @entries.any? %>
+      <ul class="divide-y divide-slate-100">
+        <% @entries.each do |entry| %>
+          <li class="flex items-center justify-between gap-4 px-4 py-3 text-sm">
+            <span class="text-slate-800"><%= entry.received_on.strftime("%d/%m/%Y") %><% if entry.invoice_number.present? %> · NF <%= entry.invoice_number %><% end %></span>
+            <span class="text-slate-600"><%= brl(entry.total) %></span>
+          </li>
+        <% end %>
+      </ul>
+    <% else %>
+      <p class="p-6 text-center text-sm text-slate-500">Nenhuma entrada deste fornecedor.</p>
+    <% end %>
+    <% if @supplier.notes.present? %>
+      <p class="border-t border-slate-200 px-4 py-3 text-sm text-slate-600"><%= @supplier.notes %></p>
+    <% end %>
+  </section>
+</div>

@@ -1,9 +1,11 @@
 <% input_class = "block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" %>
 <% label_class = "block text-sm/6 font-medium text-gray-900" %>
+<% expense_only = local_assigns[:expense_only] %>
 <div id="category_form">
   <%= form_with model: category, data: { controller: "modal-form", action: "turbo:submit-end->modal-form#close" } do |form| %>
     <h2 class="text-base/7 font-semibold text-gray-900">NOVA CATEGORIA</h2>
     <%= render "partials/form_errors", record: category %>
+    <%= hidden_field_tag :expense_only, "1", id: nil if expense_only %>
 
     <div class="grid gap-y-6 mt-3 text-left">
       <div>
@@ -13,16 +15,20 @@
         </div>
       </div>
 
-      <div>
-        <%= form.label :is_income, "Tipo", class: label_class %>
-        <div class="mt-2">
-          <%= form.select :is_income, [["Saída (despesa)", false], ["Entrada (receita)", true]], {}, class: input_class %>
+      <% if expense_only %>
+        <%= form.hidden_field :is_income, value: false %>
+      <% else %>
+        <div>
+          <%= form.label :is_income, "Tipo", class: label_class %>
+          <div class="mt-2">
+            <%= form.select :is_income, [["Saída (despesa)", false], ["Entrada (receita)", true]], {}, class: input_class %>
+          </div>
         </div>
-      </div>
+      <% end %>
 
       <div>
         <%= label_tag "category_subcategory_name", "Primeira subcategoria (opcional)", class: label_class %>
-        <p class="text-xs text-gray-500">As transações são lançadas em subcategorias. Se preencher, ela já fica selecionada na transação.</p>
+        <p class="text-xs text-gray-500">As transações são lançadas em subcategorias. Se preencher, ela já fica selecionada no formulário.</p>
         <div class="mt-2">
           <%= text_field_tag "category[subcategory_name]", params.dig(:category, :subcategory_name), id: "category_subcategory_name", placeholder: "Ex.: iFood", class: input_class %>
         </div>

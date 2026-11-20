@@ -1,0 +1,82 @@
+<% content_for :title, "Estoque · Zen Gastronomy" %>
+
+<%= render layout: "partials/page_header", locals: { title: "Estoque", subtitle: "Produtos e quantidades de #{current_company.name}" } do %>
+  <div class="grid grid-cols-2 gap-3 sm:flex">
+    <% if current_user.can?("stock.entries") %>
+      <%= link_to "Saída", new_stock_output_path, class: stock_secondary_button %>
+      <%= link_to "Nova entrada", new_stock_entry_path, class: stock_primary_button %>
+    <% end %>
+  </div>
+<% end %>
+<%= render "partials/stock_tabs" %>
+
+<div class="mx-auto max-w-7xl space-y-6 px-4 py-6 sm:px-6 lg:px-8">
+  <dl class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+    <div class="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+      <dt class="text-sm text-slate-500">Valor em estoque</dt>
+      <dd class="mt-1 text-2xl font-semibold text-slate-900"><%= brl(@stock_value) %></dd>
+    </div>
+    <div class="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+      <dt class="text-sm text-slate-500">Produtos ativos</dt>
+      <dd class="mt-1 text-2xl font-semibold text-slate-900"><%= @products.size %></dd>
+    </div>
+    <div class="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+      <dt class="text-sm text-slate-500">Com estoque baixo</dt>
+      <dd class="mt-1 text-2xl font-semibold <%= @low_stock_count.positive? ? 'text-amber-600' : 'text-slate-900' %>"><%= @low_stock_count %></dd>
+    </div>
+  </dl>
+
+  <section class="rounded-lg border border-slate-200 bg-white shadow-sm">
+    <div class="flex items-center justify-between border-b border-slate-200 px-4 py-3">
+      <h2 class="text-base font-semibold text-slate-800">Produtos</h2>
+      <% if current_user.can?("stock.count") %>
+        <%= link_to "Conferências", stock_counts_path, class: "text-sm font-semibold text-indigo-600 hover:text-indigo-500" %>
+      <% end %>
+    </div>
+    <% if @products.any? %>
+      <div class="overflow-x-auto">
+        <table class="w-full table-auto text-left text-sm">
+          <thead class="bg-slate-50 text-slate-500">
+            <tr>
+              <th class="px-4 py-3 font-normal">Produto</th>
+              <th class="px-4 py-3 text-right font-normal">Quantidade</th>
+              <th class="hidden px-4 py-3 text-right font-normal sm:table-cell">Mínimo</th>
+              <th class="hidden px-4 py-3 text-right font-normal md:table-cell">Custo médio</th>
+              <th class="px-4 py-3 text-right font-normal">Valor</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100">
+            <% @products.each do |product| %>
+              <tr id="<%= dom_id(product, :stock) %>">
+                <td class="px-4 py-3 text-slate-800">
+                  <% if current_user.can?("products.manage") %>
+                    <%= link_to product.name, product_path(product), class: "font-medium hover:text-indigo-600" %>
+                  <% else %>
+                    <span class="font-medium"><%= product.name %></span>
+                  <% end %>
+                  <% if product.low_stock? %>
+                    <span class="ml-2 rounded bg-amber-50 px-1.5 py-0.5 text-xs font-medium text-amber-700 ring-1 ring-amber-600/20 ring-inset">Estoque baixo</span>
+                  <% end %>
+                </td>
+                <td class="px-4 py-3 text-right whitespace-nowrap text-slate-800"><%= qty(product.quantity) %> <%= product.unit %></td>
+                <td class="hidden px-4 py-3 text-right whitespace-nowrap text-slate-500 sm:table-cell"><%= qty(product.min_quantity) %></td>
+                <td class="hidden px-4 py-3 text-right whitespace-nowrap text-slate-500 md:table-cell"><%= brl(product.average_cost) %></td>
+                <td class="px-4 py-3 text-right whitespace-nowrap text-slate-800"><%= brl(product.stock_value) %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% else %>
+      <p class="p-6 text-center text-sm text-slate-500">
+        Nenhum produto cadastrado.
+        <% if current_user.can?("products.manage") %><%= link_to "Cadastrar produto", new_product_path, class: "font-semibold text-indigo-600" %><% end %>
+      </p>
+    <% end %>
+  </section>
+
+  <section class="rounded-lg border border-slate-200 bg-white shadow-sm">
+    <h2 class="border-b border-slate-200 px-4 py-3 text-base font-semibold text-slate-800">Últimas movimentações</h2>
+    <%= render "stock/movements", stock_movements: @stock_movements, show_product: true %>
+  </section>
+</div>

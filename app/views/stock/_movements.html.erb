@@ -1,0 +1,23 @@
+<%# locals: stock_movements, show_product %>
+<% if stock_movements.any? %>
+  <ul class="divide-y divide-slate-100">
+    <% stock_movements.each do |movement| %>
+      <li class="flex items-start justify-between gap-4 px-4 py-3 text-sm">
+        <div class="min-w-0">
+          <p class="font-medium text-slate-800">
+            <%= stock_movement_kind_label(movement) %><% if show_product %> · <%= movement.product.name %><% end %>
+          </p>
+          <p class="text-xs text-slate-500">
+            <%= movement.occurred_at.strftime("%d/%m/%Y") %><% if movement.creator %> · <%= movement.creator.username %><% end %>
+            <% if movement.notes.present? %> · <%= movement.notes %><% end %>
+          </p>
+        </div>
+        <p class="shrink-0 font-semibold <%= movement.quantity.negative? ? 'text-red-600' : 'text-green-600' %>">
+          <%= movement.quantity.positive? ? "+" : "" %><%= qty(movement.quantity) %> <%= movement.product.unit %>
+        </p>
+      </li>
+    <% end %>
+  </ul>
+<% else %>
+  <p class="p-6 text-center text-sm text-slate-500">Nenhuma movimentação de estoque.</p>
+<% end %>
