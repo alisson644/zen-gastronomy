@@ -24,7 +24,7 @@ yarn build / yarn build:css    # one-off JS / CSS builds into app/assets/builds
 bin/rails stimulus:manifest:update  # regenerate app/javascript/controllers/index.js after adding a controller
 ```
 
-CI (`.github/workflows/ci.yml`) runs only brakeman and rubocop — tests are not run in CI, so run `rspec` locally.
+CI (`.github/workflows/ci.yml`) runs brakeman, bundler-audit, rubocop and the RSpec suite (Postgres service, `CI=true` eager-loads the app, no master key: test-only Active Record Encryption keys live in `config/environments/test.rb`).
 
 Tests use FactoryBot (`spec/factories`), shoulda-matchers, and transactional fixtures.
 
@@ -66,6 +66,13 @@ Note: `adjust_company_cash_if_cash_account!` checks `account_type == "cash"`, bu
 - `StockCmv` (PORO): CMV between two consecutive finalized counts = previous `closing_value` + stock entries created in between − current `closing_value`; revenue = paid `entrada` movements from the day after the previous count through the current count's day. The first count only opens the cycle. Shown on `/stock` and on finalized counts.
 - Permissions: `stock.view`, `stock.entries` (entries + manual outputs), `stock.count`, `products.manage`, `suppliers.manage` (`Permission::STOCK` drives the sidebar item; `stock_home_path` picks the first page the user can open).
 - Request specs: after a 404 response, call `sign_in` again before the next request (the session cookie isn't rewritten).
+
+### Security and deploy
+- Never read credentials manually in `config/application.rb`: the Docker build (`SECRET_KEY_BASE_DUMMY`) and CI run without a master key. Active Record Encryption keys are loaded from `credentials.active_record_encryption` automatically.
+- `config/initializers/rack_attack.rb`: throttles login, password reset, sign-up and general traffic; bans scanner paths. Disabled in test except `spec/requests/rack_attack_spec.rb`.
+- `config/initializers/cors.rb`: no origin allowed unless listed in `CORS_ORIGINS`; never with credentials.
+- CSP in `config/initializers/content_security_policy.rb` (script nonce; external scripts only from cdn.jsdelivr.net, pinned versions). New inline `<script>` must use `javascript_tag nonce: true`. `Permissions-Policy` is set in `config/application.rb`.
+- Production config comes from ENV (`APP_HOST`, `DB_HOST`, `SMTP_*`, `MAILER_FROM`, `CORS_ORIGINS`); Kamal reads `.env` (see `.env.example`, `docs/DEPLOY.md`). Time zone is `Brasilia`.
 
 ### Brazilian number input
 `BrazilianDecimal` concern (`brazilian_decimal :amount`) overrides attribute setters so `"1.234,56"` parses as `1234.56`. Paired with the `currency-input` Stimulus controller on the frontend. Use it for any new money attribute.

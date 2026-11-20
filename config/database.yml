@@ -82,7 +82,9 @@ production:
   primary: &primary_production
     <<: *default
     database: zen_gastronomy_production
-    username: zen_gastronomy
+    host: <%= ENV.fetch("DB_HOST", "localhost") %>
+    port: <%= ENV.fetch("DB_PORT", 5432) %>
+    username: <%= ENV.fetch("DB_USERNAME", "zen_gastronomy") %>
     password: <%= ENV["ZEN_GASTRONOMY_DATABASE_PASSWORD"] %>
   cache:
     <<: *primary_production

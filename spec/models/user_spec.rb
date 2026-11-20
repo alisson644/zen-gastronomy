@@ -86,4 +86,11 @@ RSpec.describe User, type: :model do
       expect(create(:user)).not_to be_system_admin
     end
   end
+
+  it "requires passwords with at least 8 characters" do
+    short = build(:user, password: "1234567", password_confirmation: "1234567").tap(&:valid?)
+    long = build(:user, password: "12345678", password_confirmation: "12345678").tap(&:valid?)
+    expect(short.errors[:password]).to be_present
+    expect(long.errors[:password]).to be_empty
+  end
 end
