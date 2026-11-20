@@ -71,4 +71,21 @@ RSpec.describe "Stock counts", type: :request do
     patch finalize_stock_count_path(other)
     expect(response).to have_http_status(:not_found)
   end
+
+  it "shows the closing value and the CMV of the period on a finalized count" do
+    first = travel_to(Time.zone.parse("2026-11-01 22:00")) { StockCount.start!(company: company, user: user).tap { |c| c.finalize!(user) } }
+    second = travel_to(Time.zone.parse("2026-11-30 22:00")) do
+      StockCount.start!(company: company, user: user).tap do |count|
+        count.items.first.update!(counted_quantity: 6)
+        count.finalize!(user)
+      end
+    end
+
+    get stock_count_path(first)
+    expect(response.body).to include("Estoque final", "R$ 50,00")
+    expect(response.body).not_to include("CMV do período")
+
+    get stock_count_path(second)
+    expect(response.body).to include("Estoque final", "R$ 30,00", "CMV do período", "R$ 20,00")
+  end
 end

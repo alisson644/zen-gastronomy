@@ -62,7 +62,8 @@ Note: `adjust_company_cash_if_cash_account!` checks `account_type == "cash"`, bu
 - `Supplier`, `Product` (`has_many :suppliers, through: :product_suppliers`; nested `product_suppliers_attributes` with `last_price`), all company-scoped.
 - `Product#quantity` / `#average_cost` are denormalized and maintained only by `StockMovement` (`kind`: `entrada` / `saida` / `ajuste`, signed `quantity`, `after_create` with a row lock). Never update them directly. A product with stock history can't be destroyed — deactivate it.
 - `StockEntryRegistration` (PORO) saves a `StockEntry` + items in one transaction: one `StockMovement` per item, upserts `ProductSupplier#last_price`, and creates the expense `Movement` (paid on `received_on`, or `pendente` on `due_on` for boleto).
-- `StockCount.start!` snapshots active products; `#finalize!` creates `ajuste` movements so stock matches the counted quantities (uncounted items untouched). One open count per company.
+- `StockCount.start!` snapshots active products; `#finalize!` creates `ajuste` movements so stock matches the counted quantities (uncounted items untouched). One open count per company. `finalize!` stores `closing_value` (stock value after the adjustments).
+- `StockCmv` (PORO): CMV between two consecutive finalized counts = previous `closing_value` + stock entries created in between − current `closing_value`; revenue = paid `entrada` movements from the day after the previous count through the current count's day. The first count only opens the cycle. Shown on `/stock` and on finalized counts.
 - Permissions: `stock.view`, `stock.entries` (entries + manual outputs), `stock.count`, `products.manage`, `suppliers.manage` (`Permission::STOCK` drives the sidebar item; `stock_home_path` picks the first page the user can open).
 - Request specs: after a 404 response, call `sign_in` again before the next request (the session cookie isn't rewritten).
 

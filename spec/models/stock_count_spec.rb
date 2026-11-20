@@ -50,6 +50,12 @@ RSpec.describe StockCount, type: :model do
       expect(adjustments.first.source).to eq(count.items.find_by!(product: rice))
     end
 
+    it "stores the closing stock value with counted and uncounted products" do
+      count.items.find_by!(product: rice).update!(counted_quantity: 8) # 8 x 5 = 40
+      count.finalize!(user)                                              # feijão não contado: 4 x 8 = 32
+      expect(count.reload.closing_value).to eq(72)
+    end
+
     it "leaves uncounted items untouched" do
       count.finalize!(user)
       expect(rice.reload.quantity).to eq(10)

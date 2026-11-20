@@ -28,6 +28,11 @@ module StockHelper
     number_with_precision(value, precision: precision, strip_insignificant_zeros: precision > 2, separator: ",", delimiter: "")
   end
 
+  # 32.5 -> "32,5%"
+  def cmv_percent(value)
+    "#{number_with_precision(value, precision: 1, separator: ",", delimiter: ".")}%"
+  end
+
   def stock_movement_kind_label(movement)
     case movement.kind
     when "entrada" then "Entrada"

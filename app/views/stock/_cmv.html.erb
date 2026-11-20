@@ -1,0 +1,61 @@
+<%# CMV pelo estoque (inicial + compras − final) entre conferências. locals: periods (StockCmv, mais recente primeiro) %>
+<section id="stock_cmv" class="rounded-lg border border-slate-200 bg-white shadow-sm">
+  <div class="border-b border-slate-200 px-4 py-3">
+    <h2 class="text-base font-semibold text-slate-800">CMV pelo estoque</h2>
+    <p class="text-xs text-slate-500">Estoque inicial + compras − estoque final, entre duas conferências finalizadas.</p>
+  </div>
+
+  <% if (current = periods.first) %>
+    <div class="grid grid-cols-1 gap-6 p-4 lg:grid-cols-2">
+      <div>
+        <p class="text-sm text-slate-500">
+          Período de <%= current.start_date.strftime("%d/%m/%Y") %> a <%= current.end_date.strftime("%d/%m/%Y") %>
+        </p>
+        <dl class="mt-3 divide-y divide-slate-100 text-sm">
+          <div class="flex justify-between py-2"><dt class="text-slate-600">Estoque inicial</dt><dd class="text-slate-800"><%= brl(current.opening_value) %></dd></div>
+          <div class="flex justify-between py-2"><dt class="text-slate-600">+ Compras</dt><dd class="text-slate-800"><%= brl(current.purchases) %></dd></div>
+          <div class="flex justify-between py-2"><dt class="text-slate-600">− Estoque final</dt><dd class="text-slate-800"><%= brl(current.closing_value) %></dd></div>
+          <div class="flex justify-between py-2 text-base font-semibold"><dt class="text-slate-900">= CMV</dt><dd class="text-slate-900"><%= brl(current.cmv) %></dd></div>
+        </dl>
+      </div>
+      <div class="flex flex-col justify-center rounded-lg bg-slate-50 p-4">
+        <% if current.cmv_percent %>
+          <p class="text-3xl font-semibold text-slate-900"><%= cmv_percent(current.cmv_percent) %></p>
+          <p class="mt-1 text-sm text-slate-600">do faturamento de <%= brl(current.revenue) %> no período</p>
+        <% else %>
+          <p class="text-sm text-slate-600">Sem faturamento (entradas pagas no financeiro) no período para calcular o percentual.</p>
+        <% end %>
+      </div>
+    </div>
+
+    <% if periods.size > 1 %>
+      <div class="overflow-x-auto border-t border-slate-200">
+        <table class="w-full table-auto text-left text-sm">
+          <thead class="bg-slate-50 text-slate-500">
+            <tr>
+              <th class="px-4 py-2 font-normal">Períodos anteriores</th>
+              <th class="px-4 py-2 text-right font-normal">CMV</th>
+              <th class="px-4 py-2 text-right font-normal">% do faturamento</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100">
+            <% periods.drop(1).each do |period| %>
+              <tr>
+                <td class="px-4 py-2 whitespace-nowrap text-slate-700"><%= period.start_date.strftime("%d/%m/%Y") %> a <%= period.end_date.strftime("%d/%m/%Y") %></td>
+                <td class="px-4 py-2 text-right whitespace-nowrap text-slate-800"><%= brl(period.cmv) %></td>
+                <td class="px-4 py-2 text-right whitespace-nowrap text-slate-600"><%= period.cmv_percent ? cmv_percent(period.cmv_percent) : "—" %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% end %>
+  <% else %>
+    <p class="p-6 text-center text-sm text-slate-500">
+      Finalize duas conferências para calcular o CMV — a primeira define o estoque inicial.
+      <% if current_user.can?("stock.count") %>
+        <%= link_to "Ir para conferências", stock_counts_path, class: "font-semibold text-indigo-600" %>
+      <% end %>
+    </p>
+  <% end %>
+</section>

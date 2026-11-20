@@ -34,7 +34,8 @@ class StockCount < ApplicationRecord
       end
 
       items.includes(:product).where.not(counted_quantity: nil).find_each { |item| adjust!(item, user) }
-      update!(status: :finalizada, finished_at: Time.current, finisher: user)
+      update!(status: :finalizada, finished_at: Time.current, finisher: user,
+              closing_value: company.products.sum("quantity * average_cost").round(2))
     end
   end
 
