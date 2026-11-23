@@ -5,8 +5,9 @@
 #       − estoque final (fechamento desta conferência)
 #
 # Consumo e perdas ficam embutidos no resultado. A primeira conferência só abre o ciclo.
-# O faturamento considera as entradas pagas do dia seguinte à conferência anterior até o
-# dia desta (presume conferência no fim do dia).
+# O faturamento considera as entradas pagas do dia da conferência anterior até o dia desta,
+# ambos inclusive: as entradas só têm data, e assim conferências no mesmo dia ainda contam
+# o faturamento daquele dia (o dia de fronteira pode aparecer em dois períodos seguidos).
 class StockCmv
   attr_reader :start_count, :end_count
 
@@ -33,7 +34,7 @@ class StockCmv
   end
 
   def company = end_count.company
-  def start_date = start_count.finished_at.to_date.next_day
+  def start_date = start_count.finished_at.to_date
   def end_date = end_count.finished_at.to_date
   def opening_value = start_count.closing_value
   def closing_value = end_count.closing_value

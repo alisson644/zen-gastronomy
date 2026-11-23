@@ -63,7 +63,7 @@ RSpec.describe "Stock overview", type: :request do
       travel_to(Time.zone.parse("2026-11-30 22:00")) { close_count(22) }          # final 110 → CMV 40 = 5%
 
       get stock_path
-      expect(response.body).to include("CMV", "02/11/2026", "30/11/2026", "R$ 50,00", "R$ 100,00", "R$ 110,00", "R$ 40,00", "5,0%", "R$ 800,00")
+      expect(response.body).to include("CMV", "01/11/2026", "30/11/2026", "R$ 50,00", "R$ 100,00", "R$ 110,00", "R$ 40,00", "5,0%", "R$ 800,00")
       expect(response.body).not_to include("Finalize duas conferências")
     end
   end
